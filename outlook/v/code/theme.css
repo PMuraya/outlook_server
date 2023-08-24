@@ -1,0 +1,97 @@
+/*
+Specify alternating colors to use for table rows. */
+table tr:nth-child(even){
+    /*background-color:lightcyan;*/
+}
+/*
+Tr on hover */
+table tr:hover{
+    background-color:#d1f4f8;
+    color:brown;
+}
+/*
+Table head formatting */
+th{
+    padding: 5px;
+    background-color: seagreen;
+    color: white;
+    text-align: center;
+    /* #ddd sets the border to a light color */
+    border:1px solid #ddd;
+    border-collapse:collapse;
+}
+.TD{
+    /*
+    Highlight a selected field in the table with a specific color.*/
+    background-color: #99ffff;
+}
+td{
+    /* #ddd sets the border to a light color */
+    border:1px solid #ddd;
+    border-collapse:collapse;
+}
+.TR{
+    /*    
+     Highlight the selected row*/
+    background: greenyellow;
+}
+tr{
+    /* #ddd sets the border to a light color */
+    border:1px solid #ddd;
+    border-collapse:collapse;
+}
+
+/*
+Styling full columns using colgroup*/
+.TH{
+    background-color: cyan;
+}
+/*
+Style entirity of a crud table */
+table{
+    width: 100%;
+    font-size: 15px;
+    /* #ddd sets the border to a light color */
+    border:1px solid #ddd;
+    border-collapse:collapse;
+}
+/*
+Normal mode of viewing the crud page*/
+.normal{
+    /*
+    The cursor of the normal mode is a pointer*/
+    cursor:pointer;
+}
+/* 
+For tracking modifications*/
+td.edited>input{
+    background-color: rgba(255, 0, 0, 0.247);
+}
+
+/*Mark the childre of the primary td red to show an error*/
+tr.report>span{
+    background-color: red;
+    color: yellow;
+}
+
+/*Style our error message color to light red*/
+#error, .error{
+    background-color: red;
+    color: white;
+}
+/*
+Hide the multi-select checkboxes */
+.multi_select {
+    display:none;
+}
+/*
+1. The following rules are for controlling the viewing of the file io:-*/
+
+/*
+1.1 Hide or show the LOCAL  section of a file input. The default is local.*/
+.local{}
+/*
+1.2 Hide or show the REMOTE section of a file input. By default this is hidden.*/
+.remote{
+    display: none;
+}

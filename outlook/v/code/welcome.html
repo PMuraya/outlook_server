@@ -1,0 +1,30 @@
+<html>
+
+<head>
+    <title>Welcome</title>
+    <!-- 
+        This page will be part of the homepage, so we can
+        make reference too the data model when listening to
+        events-->
+</head>
+
+<body>
+    <!-- A regular user, as opposed to a visitor that is displayed
+        on the login panel when he application starts -->
+    <div id="regular">
+        Welcome <span id="user_name"></span> to
+        <span id="app_id"></span><span id="app_name"></span>
+        as:-
+        <div id="roles">
+        </div>
+        <div>
+            <span id="business_name"></span>
+        </div>
+
+        <p id="signout">Don't forget to
+            <button id="logout" onclick="app.current.logout()">Logout</button>
+        </p>
+    </div>
+</body>
+
+</html>

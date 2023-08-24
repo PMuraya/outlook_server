@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <title>HierarchyExplorer</title>
+        <link rel="stylesheet" href="explorer.css">
+        <script type='module'>
+            //
+            import {explore} from "./explorer.js";
+            //
+            window.onload = ()=>explore();
+        </script>
+    </head>
+
+    <body>
+
+        <div id="header">
+            Hierarchical Data Explorer
+            <button id="go" hidden>Go</button>
+            <button id="cancel" hidden>Cancel</button>
+        </div>
+        
+        <div id="tree">
+        </div>
+        
+        <div id="list">
+        </div>
+
+    </body>
+</html>

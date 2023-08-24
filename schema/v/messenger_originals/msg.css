@@ -1,0 +1,93 @@
+* {
+	font-family: "Montserrat", sans-serif;
+	font-family: "Raleway", sans-serif;
+	font-size: 18;
+	font-weight: bold;
+	line-height: 1.5rem;
+	margin: 5px 5px 5px 5px;
+}
+/* Style the body */
+body {
+	display: block;
+	height: auto;
+}
+/* Style the previous message panel */
+.previous {
+	display: grid;
+	grid-template-columns: 40% 40%;
+	align-items: stretch;
+}
+/*The saved message panel */
+.saved_msg {
+	background-color: #e2e3e3;
+	border-radius: 5px;
+}
+/* The inputs inside the saved message*/
+.saved_msg > input,
+.message_info > label > input,
+.message_info > label > textarea {
+	border: none;
+	margin-left: 10%;
+}
+/* Information about the message */
+.message_info {
+	display: flex;
+	flex-direction: column;
+	width: fit-content;
+	justify-content: center;
+	height: fit-content;
+	margin-left: 10%;
+}
+/* The previous message panel should not be movable */
+#prev_message {
+	resize: none;
+	height: 30%;
+	border: none;
+	width: 85%;
+}
+
+/* The details of the previous message sender */
+#details {
+	font-size: 12px;
+	resize: none;
+	height: auto;
+	width: auto;
+	background-color: #94d2d6;
+}
+#details > .detail {
+	text-align: center;
+	text-decoration: underline;
+}
+/* Move the div and buttons  */
+/*the information button*/
+#info {
+	border: none;
+}
+/* The message textarea element */
+#message {
+	height: 150px;
+	width: 88%;
+	resize: none;
+	overflow-y: auto;
+	background-color: #eff2f2;
+	border-radius: 3px;
+}
+/* The message information */
+.message_info > label {
+	background-color: #e2e3e3;
+	border-radius: 5px;
+	width: 100%;
+}
+/* The contribution div */
+#contribution {
+	display: flex;
+	flex-direction: column;
+	width: fit-content;
+}
+/* Message details */
+p > span {
+	font-weight: bold;
+}
+#footer {
+	text-align: center;
+}

@@ -1,0 +1,53 @@
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0 5px;
+  border: 1px solid black;
+  display: grid;
+  grid-template-columns: 40% 60%;
+  grid-template-rows: 10% 20% 60% 10%;
+  grid-template-areas:
+    "title title"
+    "step heading"
+    "nav content"
+    "footer footer";
+}
+.title {
+  grid-row: title;
+  border-bottom: 1px solid black;
+}
+.heading {
+  grid-area: heading;
+  border-top: 1px solid black;
+  border-bottom: 1px solid black;
+  border-left: 1px solid black;
+}
+.step {
+  grid-area: step;
+  align-self: flex-end;
+  border-bottom: 1px solid black;
+}
+.nav {
+  grid-area: nav;
+  
+}
+.content {
+  grid-area: content;
+  border-left: 1px solid black;
+}
+.footer {
+  grid-area: footer;
+  border-top: 1px solid black;
+}
+img {
+  width: 26px;
+  height: 26px;
+}
+.header {
+  display: flex;
+  margin: 10px;
+}
+

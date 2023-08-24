@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test</title>
+        <script type="module">
+            
+            //All tests are ;+placed in a Typescript (Ts) file, that is then compiled
+            //to js, sho that we can exploit Ts to check our work
+            import * as test from "./test.js";
+            
+        </script>    
+    </head>
+    <body>
+        <button onclick="test.send()">Test Email</button>
+        <!-- 
+        The result of testing comes here -->
+        Result:<span id="result"></span>
+    </body>
+</html>

@@ -1,0 +1,92 @@
+<html>
+    <head>
+        <title>Login</title>
+        <link rel="stylesheet" href="/outlook/v/code/general.css" />
+        <script>
+            //
+            //Show/hide credentials as required. 
+            function hide_credentials(yes){
+                document.querySelector('#credentials').hidden=yes;
+            }
+        </script>
+        <style>
+            label{display:block}
+        </style>
+    </head>
+    
+    <body>
+        <fieldset id="providers">
+            <legend>Providers:</legend>
+            <label>
+                Google 
+                <input 
+                    type="radio" 
+                    name="provider_id"
+                    onchange='hide_credentials(true)'
+                    value="google"> 
+            </label>
+            <label>
+                Facebook
+                <input 
+                    type="radio"
+                    name="provider_id"
+                    onchange='hide_credentials(true)'
+                   value="facebook" 
+                    >
+            </label>
+            <label>
+                Custom
+                <input 
+                    type="radio" 
+                    name="provider_id" 
+                    onchange='hide_credentials(false)'
+                    checked
+                    value="outlook">
+            </label>
+
+            <fieldset id="credentials">
+                <legend> Credentials:</legend>
+                <label>
+                    User name<input 
+                        type="text" 
+                        id="name"
+                        value="Peter Kamau"
+                        required
+                        />
+                    <span class="report"> * </span>
+                </label>
+                <label>
+                    Password<input 
+                        type="password" 
+                        id="password"
+                        required
+                        value="pk"
+                        >
+                    <span class="report"> * </span>
+                </label>
+            </fieldset>
+        </fieldset>
+        <fieldset>
+            <legend>Operations:</legend>
+        <label>
+                Login
+                <input 
+                    type="radio" 
+                    name="operation_id" 
+                    checked
+                    value="login">
+                
+        </label>
+        <label>
+                Register
+                <input 
+                    type="radio" 
+                    name="operation_id" 
+                    value="register">
+            </label>
+       </fieldset>
+        <div id="report" class="error"></div>
+        <button id="go" >Ok</button>
+        <button id="cancel" >Cancel</button>
+    </body>
+</html>

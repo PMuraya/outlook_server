@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <fieldset>
+        <legend>Select the type of receiver</legend>
+        <label>
+            <input type="radio" name="recipient" value="individual" id="individual" />
+            Individual
+        </label>
+        <div id="users" hidden>
+            <div class="recipients">
+                All users
+                <div id="all"></div>
+            </div>
+            <div class="selected">
+                Chosen recipients
+                <div id="chosen"></div>
+            </div>
+            <!-- <select id="recipients"></select> -->
+        </div>
+        <label>
+            <input type="radio" name="recipient" value="group" id="group" />
+            group
+        </label>
+    </fieldset>
+    <button id="save">save</button>
+    <button id="go" hidden>go</button>
+    <button id="cancel">cancel</button </body>
+
+</html>

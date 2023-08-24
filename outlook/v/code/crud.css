@@ -1,0 +1,61 @@
+/*
+The root element*/
+html{
+    /*
+    This is important; it ensures that the body, of which it is a child,
+    occupies the whole page.*/
+    height: 100%;
+}
+
+/*
+The document body*/
+body{
+    /*
+    Switch-off the scrollbar on the body*/
+    margin:0;
+    padding:0;
+    /*
+    Set the body to fill the screen*/
+    height:100%;
+    /*
+    Set the body to fill the screen*/
+    background-color: white;
+    /*
+    Divide the body into grid sections*/
+    display: grid;
+    /* 
+    Specify the size and the number of the page rows*/
+    grid-template-rows: 15% 80% 5%;
+    /*
+    Define the number and size of page columns. Why columns???*/
+    grid-template-columns: 100%;
+    /*
+    Specify the sections and their position on the page.    */
+    grid-template-areas: 
+        "header"
+        "content"
+        "footer"
+}
+
+#head{
+    /*
+    Position the head in the specified section.*/
+    grid-area: header;
+    background-color: beige;
+    padding-left: 30px;
+}
+/*
+Outlook of the content area */
+#content{
+    /*
+    Specify the position of the footer.*/
+    grid-area: content;
+    overflow-y:scroll;
+}
+
+#footer{
+    /*
+    Specify the position of the footer.*/
+    grid-area: footer;
+    background-color: beige;
+}

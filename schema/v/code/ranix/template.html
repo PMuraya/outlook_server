@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>vehicle_flow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--
+    Link to the css file. -->
+    <link rel="stylesheet" href="template.css" />
+</head>
+
+<body>
+    <!--
+    Stock -->
+    <div id="stock">
+        <h3>Vehicle Stock Taking </h3>
+        <!-- 
+        Vehicle registration number.-->
+        <label
+            data-dbname="mutall_ranix"
+            data-ename="vehicle"
+            data-cname="reg_no"
+            data-io="input"
+        >Car Registration Number:
+            <input 
+                name="reg_no" 
+                type="text" 
+                style="text-transform:uppercase"
+                maxlength="8" 
+                minlength="7" 
+                pattern="\w{4}\d{3}\w"
+                title="Use this format instead KBZ999Z or KWTC555D" 
+                placeholder="Number Plate" 
+                required 
+            />
+        </label>
+        <!-- 
+        Type of vehicle-->
+        <fieldset
+            data-dbname="mutall_ranix"
+            data-ename="vehicle"
+            data-cname="category"
+            data-io="checkbox"
+        >
+            <legend>Vehicle Category:</legend>
+            <label>
+                <input 
+                    type="radio" 
+                    name="category" 
+                    value="car" 
+                />Car
+            </label>
+            <label>
+                <input 
+                    type="radio" 
+                    name="category" 
+                    value="lorry" 
+                />Lorry
+            </label>
+            <label>
+                <input 
+                    type="radio" 
+                    name="category" 
+                    value="motorcycle"
+                />Motorcycle
+            </label>
+        </fieldset>
+        </div>
+    <!--
+    Flow -->
+    <div id="flow">
+        <h3>Vehicle Flow Recording</h3>
+        <!-- 
+        Vehicle registration number.-->
+        <label
+            data-dbname="mutall_ranix"
+            data-ename="vehicle"
+            data-cname="reg_no"
+            data-io="input"
+        >
+            Registration Number
+            <input 
+                type="text" 
+                style="text-transform:uppercase" 
+                name="reg_no" 
+                placeholder="Number Plate"
+                pattern="\w{4}\d{3}\w" 
+                maxlength="8" 
+                minlength="7" 
+                required 
+            />
+        </label>
+            
+        <!-- 
+        Vehicle category.-->
+        <fieldset
+            data-dbname="mutall_ranix"
+            data-ename="vehicle"
+            data-cname="category"
+            data-io="checkbox"
+        >
+            <legend>Vehicle Category:</legend>
+            <label>
+                <input 
+                    type="radio" 
+                    name="category" 
+                    value="car" 
+                />Car
+            </label>
+            <label>
+                <input 
+                    type="radio" 
+                    name="category" 
+                    value="lorry" 
+                />Lorry
+            </label>
+            <label>
+                <input 
+                    type="radio" 
+                    name="category" 
+                    value="motorcycle" 
+                />Motorcycle
+            </label>
+        </fieldset>
+        <!--
+        Vehicle flow direction.-->
+        <fieldset
+            data-dbname="mutall_ranix"
+            data-ename="flow"
+            data-cname="direction"
+            data-io="checkbox"
+        >
+            <legend>Direction of the vehicle:</legend>
+            <label>
+                <input 
+                    type="radio" 
+                    name="direction" 
+                    value="Incoming" 
+                />Incoming 
+            </label>
+            <label>
+                <input 
+                    type="radio" 
+                    name="direction" 
+                    value="Outgoing" 
+                />Outgoing
+            </label>
+        </fieldset>
+    </div>
+    <!--
+    Question-->
+    <div id="question" data-io="radios">
+        <h3>Do You Want to End Recording Opening Stock?</h3>
+        <label> Yes <input type="radio" name="question" value="yes" checked/></label>
+        <label> No <input type="radio" name="question" value="no"/></label>
+    </div>
+    
+</body>
+
+</html>

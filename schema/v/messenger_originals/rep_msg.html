@@ -1,0 +1,83 @@
+<html>
+
+<head>
+    <title>Reply Message</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&family=Raleway&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="../../v/templates/msg.css">
+    <style>
+        @media screen and (max-width: 600px) {
+            * {
+                font-size: 18px;
+                padding-top: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+        <h2>REPLY TO A MESSAGE</h2>
+    </center>
+    <div class="previous">
+        <div class="message_info">
+            <label class="saved_msg">
+                Subject :
+                <input type="text" name="" id="subject" disabled>
+                <label>
+                    <!-- <button id="info">info</button> -->
+                </label>
+            </label>
+            <label class="saved_msg">
+                Original message:
+                <textarea id="prev_message" disabled cols="8" rows="4" height="20%">
+                </textarea>
+                <div id="details">
+                    <p class="detail">Message details</p>
+                </div>
+            </label>
+        </div>
+        <div class="message_info">
+            <label>
+                Date : <input type="date" id="today" disabled>
+            </label>
+            <label>
+                Reply:<textarea id="message" placeholder="Enter message"></textarea>
+            </label>
+        </div>
+        <!-- Contribution section 
+             This question would be asked if the message pointed to a contribution. -->
+
+    </div>
+    <div class="previous">
+        <div class="message_info">
+            <fieldset id="contribution">
+                <legend>Do you want to contribute?</legend>
+                <label>
+                    <input data-dbname="mutall_users" data-ename="message" name="contribution" value="yes" type="radio"
+                        id="yes_contribution" />
+                    <span>Yes</span>
+                </label>
+                <div class='amount' id="amount" hidden>
+                    <label>
+                        <span>Amount:</span>
+                        <input id="amount_no" type="number" />
+                    </label>
+                </div>
+                <label>
+                    <input data-dbname="mutall_users" data-ename="message" name="contribution" value="no" type="radio"
+                        id="no_contribution" />
+                    <span>No</span>
+                </label>
+            </fieldset>
+        </div>
+    </div>
+    <div id="footer">
+        <button id="go">Reply</button>
+        <button id="cancel">Cancel</button>
+    </div>
+</body>
+
+</html>

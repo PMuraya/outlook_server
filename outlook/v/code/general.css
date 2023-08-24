@@ -1,0 +1,35 @@
+/*
+The html element covers the entire browser window*/
+html{
+    width:100%
+}
+
+/*
+Let the body width be 1/3 of the browser window*/
+body{
+    width:100%
+}
+/*
+Make the font size good enough for projection and mobile phone 
+suitability*/
+*{
+    font-size: 27px;
+    line-height: 1.4;
+}
+
+/*
+Reports are always shown in green; the error class (see below) makes them red*/
+report{
+    color:green;
+}
+/*
+Any element of the error class should be shown in red*/
+.error{
+    color: red;
+}
+
+/*
+Labels are displayed as blocks*/
+label{
+    display:block;
+}

@@ -1,0 +1,705 @@
+<head>
+    <title>Registration form</title>
+    <link rel="stylesheet" href="general.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+
+    <h3>Level 2 Registration Form</h3>
+    <h4>Your Internship details</h4>
+    
+    <!--email address-->
+    <label 
+        data-dbname="mutall_users" 
+        data-ename="user"
+        data-cname="email"
+        data-io="input"
+    >
+        <Span>Enter your email.</Span>
+        <input 
+            placeholder="i.e example@gmail.com"
+            type="text"
+        >
+    </label>
+    
+    <!--mobile number-->
+    <label 
+        data-dbname="mutall_users"
+        data-ename="mobile"
+        data-cname="num"
+        data-io="input"
+    >
+        <span>Enter your mobile number</span>
+        <input 
+            placeholder="Enter i.e 759223322."
+            maxlength="10"
+            type="text">
+    </label>
+    
+    <!--phone number-->
+    <label id="add_phone_label">
+          <table maxlength="9"
+            type="text"> 
+            <thead>
+                <tr>
+                    <th
+                        data-dbname="mutall_users"
+                        data-ename="mobile"
+                        data-cname="num"
+                        data-io="input"
+                    >Enter Phone Number
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="name">
+                        <input 
+                            type="number" 
+                            class="number" 
+                            placeholder="Type here..."
+                        >
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button id="add_phone_number">add phone number</button>
+    </label>
+    
+    <!--Adding image-->
+    <fieldset
+        data-dbname="mutall_users" 
+        data-ename="image"
+        data-cname="path"
+        data-io="image"
+    >
+        <img src="../images/user/avatar.png" id="image" style="width: 50px;">
+        <legend>Select an image</legend>
+        <label>
+            <input 
+                type="radio" 
+                name="select_file"
+                data-show="local"
+                data-hide="remote"
+            >Select from your computer
+            <div id="local">
+                <input type="file">
+                <button id="upload">Upload</button>
+            </div>
+        </label>
+        <label>
+            <input 
+                type="radio" 
+                name="select_file"
+                data-show="remote"
+                data-hide="local"
+            >Select from the server
+            <div id="remote">
+                Type the path to the image
+                <input type="text">
+                <button id="browse">Browse</button>
+            </div>
+        </label>
+    </fieldset>   
+    
+    <!-- start date of internship-->
+    <label 
+        data-dbname="mutall_tracker"
+        data-ename="intern"
+        data-cname="start_date"
+        data-io="input"
+    >
+        <span>Start Date:</span>
+        <input
+            type="date"
+        >
+    </label>
+    
+    <!--Selecting type of attachment-->
+    <fieldset 
+        data-dbname="mutall_tracker"
+        data-ename="intern"
+        data-cname="attachment"
+        data-io="radios"
+    >
+        <legend>Select Type of Attachment</legend>
+        <label>
+            <input
+                type="radio" 
+                name="attachment"
+                data-hide="icdl_date,end_date"
+                value="post_graduate"
+                checked
+                />
+            <span>Open Ended for Post Graduates</span>
+        </label>
+        <label>
+            <input
+                name="attachment" 
+                type="radio"
+                data-show="end_date"
+                data-hide="icdl_date"
+                value="under_graduate"             
+            />
+            <span>Fixed term for Under Graduates</span>
+        </label>
+        
+     
+        <label  id="end_date" hidden
+                data-dbname="mutall_tracker"
+                data-ename="intern"
+                data-cname='end_date' 
+        >
+            <span>End Date:</span>
+            <input type="date">
+
+        </label>
+   
+
+        <label>
+            <input
+                
+                name="attachment"
+                type="radio" 
+                data-show="icdl_date"
+                data-hide="end_date"
+                value="icdl"/>
+            <span>ICDL for Form Four Leavers</span>
+        </label>
+       
+        <label id="icdl_date" hidden 
+            data-dbname="mutall_tracker"
+            data-ename="intern"
+            data-cname='end_date' >
+            <span>End Date:</span>
+            <input
+                
+                type="date"
+            >
+        </label>
+        
+    </fieldset>
+    
+    <!--Selecting laptop requirements and others-->
+    <fieldset
+        data-dbname="mutall_tracker"
+        data-ename="intern"
+        data-cname="requirement"
+        data-io="checkboxes"
+    >
+        <legend>Do you have the following requirements?</legend>
+        <label>
+            <input 
+                name="requirement"
+                type="checkbox"
+                value="laptop"
+            >
+            <span>Laptop(preferably with a core i7 processor)</span>
+        </label>
+
+        <label>
+            <input
+                name="requirement"
+                type="checkbox"
+                checked
+                value="smartphone"
+            >
+            <span>Smart phone</span>
+        </label>
+
+        <label>
+            <input
+                name="requirement"
+                type="checkbox"
+                value="others" 
+                data-show="other_equipments"
+            >
+            <span>Other</span>
+        </label>
+        
+        <div id="other_equipments" hidden data-dbname="mutall_tracker" data-ename="intern" data-cname="requirement">
+            <input  type="text" >
+        </div>
+    </fieldset>  
+   
+    <!--Availability-->
+        <fieldset 
+            data-dbname="mutall_tracker"
+            data-ename="intern"
+            data-cname="available"
+            data-io="radios"
+        >
+        <legend>Are you available from 8am to 5pm on weekdays</legend>
+        <label>
+            <input
+                name="available"
+                value="yes"
+                type="radio"
+                checked
+                data-hide="Available"
+            >
+            <span>Yes</span>
+        </label>
+        <label>
+            <input
+                name="available"
+                value="no"
+                type="radio"
+                data-show="available"
+            >
+            <span>No</span>
+
+        </label>
+        
+        <!--Times of availability-->
+        <div id="available" hidden>
+            <span>what time are you available from</span>
+            
+            <label 
+                data-dbname="mutall_tracker" 
+                data-ename="intern" 
+                data-cname="from_time">
+                From <input  type="time" value="07:00"> 
+            </label>
+            <label 
+                data-dbname="mutall_tracker" 
+                data-ename="intern" 
+                data-cname="to_time">
+                To
+                <input  type="time" value="14:00">
+            </label>
+        </div>
+   
+    </fieldset>    
+    
+    <!--Selecting sponsor options-->
+    <fieldset
+            data-dbname="mutall_tracker"
+            data-ename="intern"
+            data-cname="sponsor"
+            data-io="radios"
+    >
+        <legend>Do you have a sponsor?</legend>
+        <label>
+            <input
+                type="radio"
+                name="sponsor"
+                data-show="sponsored"
+                data-hide="self-sponsored"
+            >
+            <span>Yes</span>
+        </label>
+
+        <fieldset id="sponsored" hidden >
+            
+            <label data-dbname="mutall_users"
+                data-ename="user"
+                data-cname="name" 
+                data-io="input">
+                <span>Full Name</span>
+                <input                      
+                    type="text"
+                    maxlength="25"
+                    value="Frank N"
+                    >
+            </label >
+            <label 
+                data-dbname="mutall_users"
+                data-ename="user"
+                data-cname="email" 
+                data-io="input">
+                <span>Email</span>
+                <input
+                    name="email"
+                    type="text"
+                    maxlength="25"
+                    value="frank@gmail.com">
+            </label>
+            <label 
+                data-dbname="mutall_users"
+                data-ename="mobile"
+                data-cname="num" 
+                data-io="input">
+                <span>Phone Number</span>
+                <input
+                    name="num"
+                    type="text"
+                    maxlength="10"
+                    value="0786575656">
+            </label>
+        </fieldset>
+
+        <label >
+            <input
+                name="sponsor"
+                type="radio"
+                checked
+                value="no"
+                data-show="self-sponsored"
+                data-hide="sponsored"
+            >                
+            <span>No</span>
+        </label>
+        
+        <div id="self-sponsored" hidden  data-dbname="mutall_tracker" data-ename="intern" 
+             data-cname="self_sponsored" data-io="textarea"
+        >
+            <span>How will you support yourself?</span><br>
+            <textarea maxlength="200" >
+            </textarea>
+        </div>
+    </fieldset>
+
+    <!--Level of education-->
+    <fieldset>
+        <legend>Level Of Education</legend>
+        <table id="certificate" style="width: 100%;">
+            <thead>
+                <tr>
+                    <th 
+                        data-dbname="mutall_tracker" 
+                        data-ename="certificate" 
+                        data-cname="cert_name">
+                        Education Level
+                    </th>
+                    <th 
+                        data-dbname="mutall_tracker" 
+                        data-ename="certificate" 
+                        data-cname="institute">
+                        Institute attended
+                    </th>
+                    <th 
+                        data-dbname="mutall_tracker" 
+                        data-ename="certificate" 
+                        data-cname="start_date">
+                        Start date
+                    </th>
+                    <th 
+                        data-dbname="mutall_tracker" 
+                        data-ename="certificate" 
+                        data-cname="end_date">
+                        End date
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td data-cname="name">
+                        <input 
+                            type="text"
+                            placeholder="E.g., Highschool/College" 
+                            value="Degree"
+                        >
+                    </td>
+                    <td>
+                        <input 
+                            type="text" 
+                            value="Technical University"
+                        >
+                    </td>
+                    <td>
+                        <input 
+                            type="date" 
+                            value="2018-04-02"
+                        >
+                    </td>
+                    <td>
+                        <input 
+                            type="date" 
+                            value="2021-08-10"
+                        >
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input 
+                            type="text" 
+                            value="Diploma"
+                        >
+                    </td>
+                    <td>
+                        <input 
+                            type="text" 
+                            value="Kenyatta university"
+                        >
+                    </td>
+                    <td>
+                        <input 
+                            type="date" 
+                            value="2017-03-04"
+                        >
+                    </td>
+                    <td>
+                    <input 
+                        type="date" 
+                        value="2020-04-23"
+                    >
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button">Add New Row</button>
+    </fieldset>
+
+    <!--Programming languages-->
+    <div id="programming_languages"
+        data-dbname="mutall_tracker"
+        data-ename="intern"
+        data-cname="language"
+        data-io="checkboxes"
+    >
+        <h2>
+            Which of the following languages are you familiar with?
+        </h2>
+        <label>
+                <input
+                    type="checkbox"
+                    value="php"
+                    checked>
+                    
+                <span>Php</span>
+            </label>
+        <label>
+                <input
+                    type="checkbox"
+                    value="javascript"
+                    checked>
+                <span>Javascript</span>
+            </label>
+        <label>
+                <input
+                    type="checkbox"
+                    value="html">
+                <span>Html</span>
+            </label>
+        <label>
+                <input
+                    type="checkbox"
+                    value="sql">
+                <span>Sql</span>
+            </label>
+        <label>
+                <input
+                    type="checkbox"
+                    value="other"
+                    data-show="others"
+                >
+                <span>Other language</span>
+            </label>
+        <div class="others" hidden data-dbname="mutall_tracker"
+            data-ename="intern"
+            data-cname="other_language">
+            Please specify using a comma to separate the languages.
+            <input 
+                type="text" 
+            >
+        </div>
+    </div>
+
+    <!--Work experience-->
+    <fieldset>
+        <legend>Previous Work Experience/History attachments?</legend>
+        <table id="attachment">
+            <thead>
+                <th 
+                    data-dbname="mutall_tracker" 
+                    data-ename="attachment" 
+                    data-cname="company" 
+                   
+                >
+                    Company
+                </th>
+                <th 
+                    data-dbname="mutall_tracker" 
+                    data-ename="attachment" 
+                    data-cname="designation" 
+                >
+                    Designation
+                </th>
+                <th 
+                    data-dbname="mutall_tracker" 
+                    data-ename="attachment" 
+                    data-cname="start_date" 
+                    >
+                    Start date
+                </th>
+                <th 
+                    data-dbname="mutall_tracker" 
+                    data-ename="attachment" 
+                    data-cname="end_date"  
+                    >
+                    End date
+                </th>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <input type="text" value="Mutall-data"/>
+                    </td>
+                    <td>
+                        <input type="text" value="programmer">
+                    </td>
+                    <td>
+                        <input type="date" value="2017-03-04"/>
+                    </td>
+                    <td>
+                        <input type="date" value="2017-03-04"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" value="mutall_data"/>
+                    </td>
+                    <td>
+                        <input type="text" value="programmer"/>
+                    </td>
+                    <td>
+                        <input type="date" value="2017-03-04"/>
+                    </td>
+                    <td>
+                        <input type="date" value="2017-03-04">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="button">Add New Row</button>
+    </fieldset>
+    
+    <!--Referred by-->
+    <fieldset
+        
+    >
+        <legend>Who referred you to us?</legend>
+        
+        <div 
+            data-dbname="mutall_tracker"
+            data-ename="referee"
+            data-cname="name"  
+            data-io="input" >
+            
+             <label 
+                data-dbname="mutall_user"
+                data-ename="user"
+                data-cname="name"  
+                data-io="input" >
+            
+                <span>Full Name</span>
+                <input
+                    name="name" 
+                    type="text"
+                    maxlength="25"
+                    value="carlo">
+            </label>
+        </div>   
+        
+        <label 
+            data-dbname="mutall_user"
+            data-ename="user"
+            data-cname="email"  
+            data-io="input">
+                <span>Email</span>
+                <input
+                    name="email"
+                    type="text"
+                    maxlength="25"
+                    value="carlo@gmail.com">
+            </label>
+
+        <label 
+            data-dbname="mutall_user"
+            data-ename="mobile"
+            data-cname="num"  
+            data-io="input">
+                <span>Phone Number</span>
+                <input
+                    name="phone"
+                    type="text"
+                    maxlength="10"
+                    value="0786579656">
+            </label>
+    </fieldset>
+    
+    <!--Residence-->
+    <fieldset 
+        data-dbname="mutall_tracker"
+        data-ename="intern"
+        data-cname="residence"
+        data-io="checkbox"
+    >
+        <legend>Are you a resident of Kiserian?</legend>
+        <label>
+                <span>Yes</span>
+                <input
+                    type="checkbox"
+                    value="Kiserian"
+                    checked/>
+            </label>
+        <label>
+                <span>No</span>
+                <input
+                    type="checkbox"
+                    data-show="resident_town"
+                />
+            </label>
+        <div id="resident_town" hidden 
+             data-dbname="mutall_tracker"
+             data-ename="intern"
+             data-cname="residence">
+            <label>
+                    <span>whats your residence?</span>
+                    <input                                           
+                       type="text"
+                        />
+                </label>
+        </div>
+    </fieldset>
+    
+    <!--Next of kin details-->
+    <fieldset>
+        <legend>Who is your next of Kin?</legend>
+        <label 
+            data-dbname="mutall_tracker"
+            data-ename="kin"
+            data-cname="name"  
+            data-io="input"
+        >
+                <span>Full Name</span>
+                <input
+                    name="name"
+                    type="text"
+                    maxlength="25"
+                    value="carl"
+                    />
+        </label>
+        <label
+            data-dbname="mutall_tracker"
+            data-ename="kin"
+            data-cname="email"  
+            data-io="input"
+        >
+                <span>Email</span>
+                <input
+                    name='email'
+                    type="text"
+                    maxlength="25"
+                    value="fans@gmail.com">
+        </label>
+        <label 
+            data-dbname="mutall_tracker"
+            data-ename="kin"
+            data-cname="ID"  
+            data-io="input"
+        >
+                <span>ID Number</span>
+                <input
+                    name="ID"
+                    type="text"
+                    maxlength="10"
+                    value="32685426">
+        </label>
+    </fieldset>
+   
+    <button id="go">Go</button>
+    <button id="cancel">Cancel</button>
+
+

@@ -1,0 +1,1 @@
+{"url":"undefined","class":"database","cargs":"[\"mutall_mlima\"]","method":"get_sql_data","margs":"[\"\\n            select \\n                title, \\n                name, \\n                photo, \\n                registration_id  \\n            FROM member\\n        \"]"}

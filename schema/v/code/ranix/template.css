@@ -1,0 +1,25 @@
+/*
+Make the font size good enough for projection. */
+* {
+    font-size: 20px;
+    line-height: 1.5;
+    border-radius: 5px;
+}
+
+
+/*
+To display the labels in a block format rather than inline. */
+label {
+    display: block;
+}
+
+
+form {
+    margin-top: 6%;
+    /* margin-left: 5%; */
+}
+
+
+body {
+    margin: 6%;
+}

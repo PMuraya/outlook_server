@@ -1,0 +1,46 @@
+<!--
+This is a html 5 document, so elements like framesets are not supported -->
+<!DOCTYPE html>
+<!--
+A viewer allows us to display a html document exactly as it would appear
+in an application by leveraging our outlook library, so that, e.g., all 
+selectors pre-filled, click buttons can respond, etc. 
+-->
+<html>
+    <head>
+        <title>Viewer</title>
+        
+        <!--Not sure why this is important -->
+        <meta charset="UTF-8">
+        <!-- 
+        Important for making this page suitable for viewing on a mobile 
+        device-->
+        <meta 
+            name="viewport" 
+            content="width=device-width, initial-scale=1.0"
+        >
+        <!-- Our in-house style optimised for overhead projection -->
+        <link rel="stylesheet" href="/outlook/v/code/general.css" />
+    </head>
+    <body>
+        <h1>HTML Viewer</h1>
+        <!--
+        Specify location of the HTML file on the server -->
+        <label>
+            Enter full filename:
+            <input id="filename" type="text" size="40">
+        </label>    
+        <input type="button" value="Browse" onclick="page.current.browse()">
+        
+        <!-- 
+        Do the reporting here. By default, reports a shown in green. Add the error
+        class to show them in red when they refer to error messages-->
+        <div id="report"></div>
+        <!-- 
+        Events for these  buttons are added automatically. Do not interfere 
+        with them-->
+        <button id="go">View HTML</button>
+        <button id="cancel">Cancel</button>
+
+    </body>
+</html>

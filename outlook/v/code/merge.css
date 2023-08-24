@@ -1,0 +1,33 @@
+*{    font-family: 'Poppins', sans-serif;}
+html{
+    height: 100%;
+    width: 100%;
+}
+body{
+    display: grid;
+    grid-template-rows: 10% 80% 10%;
+    grid-template-columns: 100%;
+    grid-template-areas: "header" "content" "footer" ;
+    background-color: azure;
+    margin: 0;
+
+}
+.header{
+    margin-top: 15px;
+    text-align: center;
+}
+.content{
+    align-items: center;
+}
+.footer{
+    display: flex;
+    flex-direction: row;
+}
+.merger{
+    position: absolute;
+    left: 25%;
+    transform: translate(500%);
+    border-radius: 15px;
+    height: 5vh;
+    width: auto;
+}

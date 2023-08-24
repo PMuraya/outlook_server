@@ -1,0 +1,87 @@
+html{
+    height: flex;
+    width: flex-content;
+    background-color:azure;
+    text-decoration:  blue;
+}
+
+body{
+    display: block;
+}
+
+#content{
+    background-color:#e6e6;
+    text-align: center;
+    font-size: 20px;
+    display:flex;
+    flex-direction: column;
+    align-items: baseline;
+}
+button
+{
+    text-align: center;
+    display:inline-block;
+    margin-left: 40vw;
+    margin-right: 60vw;
+    margin-top: 1vh;
+    width: auto;
+    height: 8vh;
+    font-size: 24px;
+    border-radius:10px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19);
+    cursor: grab;
+    
+
+}
+input[type="radio"]{
+    size: 20px;
+    display: none;
+}
+label span:hover,
+input[type="radio"]:checked + span{
+    background-color: #d6d6e5;  
+}
+label span :before{
+    content: "";
+    background-color: #fff;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    margin-right: 10px;
+    transition: .10s ease;
+    box-shadow: inset 0 0 0 2px #00005c;
+}
+input[type="radio"]:checked + span:before{
+    box-shadow: inset 0 0 0 10px #00005c;
+}
+.button:hover{
+    background-color: mediumspringgreen;
+}
+
+.button:active{
+    background-color: peachpuff;
+    transform: translateY(4px); 
+
+}
+/*use media query based on phone display*/
+@media all and (min-device-width:50vw){
+    #menu{width: 20vw; float: inside;}
+}
+span{
+    margin:0 auto;
+    padding:20px 15px;
+}
+table{
+    border-collapse: collapse;
+    border:grey 2px solid;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif ;
+    letter-spacing: 1px;
+    font-size: 0.9em;
+}
+th,td{
+    border:inherit(table);
+    padding: 10px 10px;
+}
+
+
+

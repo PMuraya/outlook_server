@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <!-- 
+        The tile of your project -->
+        <title></title>
+        <!-- 
+        Styling the index page in terms of grids -->
+        <link rel="stylesheet" href="index.css"/>
+        
+        <script  type='module'>
+            //
+            //Import the application class from outlook
+            import {app} from "../../outlook/v/outlook";
+            //
+            //Avail the application to this window
+            window.app = app;
+            //
+            //Import the  login service 
+            import * as login from "./login";
+            window.login=login;
+
+        </script>
+        
+        
+    </head>
+    
+    <body>
+      <div class="header">
+          <div id="logo">Logo</div>
+          <div id="heading">Heading</div>
+      </div>
+      <div id="why">Why</div>
+      <div id="services">Services
+          <button>Crud</button>
+      </div>
+      <div id="content">Content</div>
+      <div id="welcome">
+          Please <a href="" onclick="login.execute()">login</a> to access 
+          various services
+      </div>
+      <div id="whatsup">Whatsup</div>
+      <div class="footer">
+          <div id="developer">
+              <img src="images/image.jpeg" alt="developer's image" class="img_dev">
+          </div>
+          <div id="signature">Signature</div>
+          <div id="company">Company</div>
+      </div>
+    </body>
+</html>

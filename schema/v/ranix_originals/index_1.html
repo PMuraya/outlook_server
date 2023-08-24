@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Park Template</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+   <div class="grid-container">
+<div class="grid-item grid-item-1">
+   <input type="checkbox"> Is there any car in the carpark? <br>
+   <input type="checkbox"> Do you want to stop recording Opening Stock? <br>
+   <input type="checkbox">Do you want to end carpark Flow recording? <br>
+   <input type="checkbox"> Do you want to stop recording carpark Closing Stock? <br>
+</div>
+<div class="grid-item grid-item-2">
+    <form class="frame" id="stock">
+   <h3>Vehicle </h3>
+   <fieldset>
+       <legend>Is there any car in the carpark?</legend>
+       <label>
+           <input 
+               name="vehicle"
+               value="yes"
+               type="radio"
+               checked
+               data-hide="vehicle"
+           />
+           <span>yes</span>
+       </label>
+       <label><input 
+               name="vehicle"
+               value="yes"
+               type="radio"
+               data-hide="vehicle"
+       />
+           <span>no</span>
+       </label>
+   </fieldset>
+   <!-- 
+   Vehicle registration number.-->
+   <label
+       data-dbname="mutall_ranix"
+       data-ename="vehicle"
+       data-cname="reg_no"
+       data-io="input"
+   >Car Registration Number:
+       <input 
+           data-ename="stock" 
+           id="reg_no" 
+           name="reg_no" 
+           type="text" 
+           style="text-transform:uppercase"
+           maxlength="8" 
+           minlength="7" 
+           pattern="\w{4}\d{3}\w"
+           title="Use this format instead KBZ999Z or KWTC555D" 
+           placeholder="Number Plate" 
+           required 
+       />
+   </label>
+   <fieldset
+       data-dbname="mutall_ranix"
+       data-ename="vehicle"
+       data-cname="category"
+       data-io="checkbox"
+   >
+       <!--
+            The type of vehicle. 
+       -->
+       <legend>Vehicle Category:</legend>
+       <label>
+           <input 
+               type="radio" 
+               id="category" 
+               name="category" 
+               value="Car" 
+               required 
+           />Car
+       </label>
+       <label>
+           <input 
+               type="radio" 
+               id="category" 
+               name="category" 
+               value="Lorry" 
+               required 
+           />Lorry
+       </label>
+       <label>
+           <input 
+               type="radio" 
+               id="category" 
+               name="category" 
+               value="Motorcycle"
+               required 
+           />Motorcycle
+       </label>
+   </fieldset>
+   <p>
+       NOTE: Stock should be taken, in the morning, <strong>before recording flows </strong>,
+       <strong>before going on a break</strong>, <strong>after coming from a break</strong>, and
+       <strong>before Ending the day</strong>
+   </p>
+   <fieldset
+       data-dbname="mutall_ranix"
+       data-ename="stock"
+       data-cname="datetime"
+       data-io="input"
+   >
+       <!-- 
+           The time of the day.
+       -->
+       <legend>Take Stock:</legend>
+       <label>
+           <input 
+               type="radio" 
+               id="daytime" 
+               name="daytime" 
+               value="opening" 
+               required 
+           />Opening Stock
+       </label>
+       <label><input 
+               type="radio" 
+               id="daytime" 
+               name="daytime" 
+               value="closing" 
+               required 
+           />Closing Stock
+       </label>
+   </fieldset>
+<!--    <fieldset
+       data-dbname="mutall_ranix"
+       data-ename="stock"
+       data-cname="datetime"
+       data-io="input"
+   >
+       <label>
+           <input 
+               id="datetime" 
+               name="datetime" 
+               hidden 
+           />
+       </label>
+       <label>
+           <input type='text' 
+                  name="name" 
+                  id="name" 
+                  hidden 
+               />
+       </label>
+       <!-- 
+            The error message reporting element
+       -->
+       <div id="reports" class="error">
+       </div>
+   </fieldset>
+</form>
+<form id="flow">
+<h3>Vehicle Flow</h3>
+<!-- 
+   Vehicle registration number.
+-->
+<label
+   data-dbname="mutall_ranix"
+   data-ename="vehicle"
+   data-cname="reg_no"
+   data-io="input"
+>
+   
+</label>
+<p> Registration Number</p>
+<input 
+   type="text" 
+   style="text-transform:uppercase" 
+   id="reg_no" 
+   name="reg_no" 
+   placeholder="Number Plate"
+   pattern="\w{4}\d{3}\w" 
+   maxlength="8" 
+   minlength="7" 
+   required 
+/>
+<!-- 
+   Vehicle category.
+-->
+<fieldset
+   data-dbname="mutall_ranix"
+   data-ename="vehicle"
+   data-cname="category"
+   data-io="checkbox"
+>
+   <legend>Vehicle Category:</legend>
+   <label>
+       <input 
+           type="radio" 
+           id="category" 
+           name="category" 
+           value="car" 
+           required 
+       />Car
+   </label>
+   <label>
+       <input 
+           type="radio" 
+           id="category" 
+           name="category" 
+           value="lorry" 
+           required 
+       />Lorry
+   </label>
+   <label>
+       <input 
+           type="radio" 
+           id="category" 
+           name="category" 
+           value="motorcycle" 
+           required 
+       />Motorcycle
+   </label>
+</fieldset>
+<!--
+   Vehicle flow direction.
+-->
+<fieldset
+   data-dbname="mutall_ranix"
+   data-ename="flow"
+   data-cname="direction"
+   data-io="checkbox"
+>
+   <legend>Direction of the vehicle:</legend>
+   <label>
+       <input 
+           type="radio" 
+           id="direction" 
+           name="direction" 
+           value="Incoming" 
+           required 
+       />Incoming 
+   </label>
+   <label>
+       <input 
+           type="radio" 
+           id="direction" 
+           name="direction" 
+           value="Outgoing" 
+           required 
+       />Outgoing
+   </label> 
+</fieldset>
+
+<!-- Closing Stock -->
+<h3>Vehicle </h3>
+   <fieldset>
+       <legend>Is there any car in the carpark?</legend>
+       <label>
+           <input 
+               name="vehicle"
+               value="yes"
+               type="radio"
+               checked
+               data-hide="vehicle"
+           />
+           <span>yes</span>
+       </label>
+       <label><input 
+               name="vehicle"
+               value="yes"
+               type="radio"
+               data-hide="vehicle"
+       />
+           <span>no</span>
+       </label>
+   </fieldset>
+   <!-- 
+   Vehicle registration number.-->
+   <label
+       data-dbname="mutall_ranix"
+       data-ename="vehicle"
+       data-cname="reg_no"
+       data-io="input"
+   >Car Registration Number:
+       <input 
+           data-ename="stock" 
+           id="reg_no" 
+           name="reg_no" 
+           type="text" 
+           style="text-transform:uppercase"
+           maxlength="8" 
+           minlength="7" 
+           pattern="\w{4}\d{3}\w"
+           title="Use this format instead KBZ999Z or KWTC555D" 
+           placeholder="Number Plate" 
+           required 
+       />
+   </label>
+   <fieldset
+       data-dbname="mutall_ranix"
+       data-ename="vehicle"
+       data-cname="category"
+       data-io="checkbox"
+   >
+       <!--
+            The type of vehicle. 
+       -->
+       <legend>Vehicle Category:</legend>
+       <label>
+           <input 
+               type="radio" 
+               id="category" 
+               name="category" 
+               value="Car" 
+               required 
+           />Car
+       </label>
+       <label>
+           <input 
+               type="radio" 
+               id="category" 
+               name="category" 
+               value="Lorry" 
+               required 
+           />Lorry
+       </label>
+       <label>
+           <input 
+               type="radio" 
+               id="category" 
+               name="category" 
+               value="Motorcycle"
+               required 
+           />Motorcycle
+       </label>
+   </fieldset>
+   <p>
+</form>
+
+
+<button id="myBtn" type="button" > NEXT</button>
+
+<script>
+    const myBtn = document.getElementById("myBtn");
+
+    myBtn.addEventListener("click", function(e){
+        alert('test');
+        const name = prompt("Do you want to stop recording Opening Stock?");
+        document.body.innerHTML="yes"
+    });
+
+</script>
+
+
+</div>
+<div class="grid-item grid-item-3"><a href="#">Help</a></div>
+   </div>  
+</body>
+</html>

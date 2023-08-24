@@ -1,0 +1,74 @@
+ .grid-container {
+    display: grid;
+    grid-template-columns: 20% 40% 20%;
+    grid-auto-rows: minmax(150px, auto);
+    grid-template-rows: auto;
+    grid-gap: 20px;
+   justify-content: center;
+   align-content: center;
+  /* min-width: 400px; */
+  /* max-width: 90%; */
+  margin: 20px auto;
+  margin-bottom: 0;
+  }
+  
+ 
+  * {
+  font-family: Raleway;
+}
+
+*, *::before, *::after {
+box-sizing: border-box;
+}
+
+.grid-item {
+    position: relative;
+    font-size: 25px;
+    padding: 20px;
+    padding-top: 50px;
+    background-color: #09e3fc;
+    color: #222;
+    border: 1px solid rgb(40, 7, 140);
+    }
+
+    .grid-item-1{
+        grid-column-start: 1;
+        grid-column-end: 1;
+      }
+
+      .grid-item-2{
+        grid-column-start: 2;
+        grid-column-end: 2;
+      }
+
+      .grid-item-3{
+        grid-column-start: 3;
+        grid-column-end: 3;
+      }
+      /*
+Make the font size good enough for projection. */
+* {
+  font-size: 20px;
+  line-height: 1.5;
+  border-radius: 5px;
+}
+
+
+/*
+To display the labels in a block format rather than inline. */
+label {
+  display: block;
+}
+
+
+form {
+  margin-top: 6%;
+  /* margin-left: 5%; */
+}
+
+
+body {
+  margin: 6%;
+}
+
+

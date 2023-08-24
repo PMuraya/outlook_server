@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <title>crud</title>
+        
+        <link rel="stylesheet" href="/outlook/v/code/crud.css">
+        
+        <link id="theme_css" rel="stylesheet" href="/outlook/v/code/theme.css">
+        <!--
+        This style is for toggling between edit and normal mode-->
+        <style class="edit" id="edit_style">
+            .edit{
+                display: none;
+                background-color: yellowgreen;
+            }
+        </style>
+        
+    </head>
+    
+    <body>
+        
+        <div id="head">
+            <p id="error" onclick='this.textContent=""'></p>
+            <h3>Managing <span id="subject">?</span></h3>
+            <label>Filter by:
+                <input 
+                    type="text" 
+                    id="filter" 
+                    placeholder="E.g., participant.name = 'Kaniu'">
+            </label>
+            <label>Sort by:
+                <input 
+                    type="text"
+                    id="sort" 
+                    placeholder="E.g., minute.date desc">
+            </label>
+            
+            <button onclick="crud.page.current.review()">Review</button>
+            
+        </div>
+        <div id="content">
+        </div>
+        <div id="footer">
+            <label>GoTo:
+                <input 
+                    type="number" 
+                    id="goto" 
+                    value="0"
+                    placeholder="Number">
+            </label>
+            <button onclick="crud.page.current.theme.goto()">Go</button>
+            <!--
+            This will retrieve the previous records.-->
+            <button onclick="crud.page.current.theme.retrieve_records('top')">Previous</button>
+            <!--
+            This will retrieve the next records.-->
+            <button onclick="crud.page.current.theme.retrieve_records('bottom')">Next</button>
+            <!--
+            This will hide/unhide the selected columns.-->
+            <button onclick="crud.page.current.unhide()">unhide</button>
+           <!--            
+            Hide the currently selected column-->
+            <button onclick="crud.page.current.hide()">Hide</button>
+            <!-- 
+            This is a toggle switch that puts the page in edit mode. You know you 
+            are in the edit mode because of Joyce's cursor. When re-pressed, it 
+            switches to normal mode-->
+            <button id="edit" onclick="crud.page.current.edit_click()">Edit</button>
+            <!-- 
+            Remove the selected record from both the database and the view-->
+            <button onclick="crud.page.current.delete()">Delete Current</button>
+            <!-- 
+            Insert a record above the current cursor position. If at the top
+            insert it just after the 'th' tag-->
+            <button onclick="crud.page.current.create_row(this)">Create</button>
+            <!--
+            Save all the affected records in bulk-->
+            <button onclick="crud.page.current.update_database()">Save</button>
+            <!--
+                Show/hide the multi-record selector check boxes-->
+            <button onclick="crud.page.current.multi_select(this)">Multi select</button>
+            <!-- 
+            Merge the selected records-->
+            <button onclick="crud.page.current.merge()">Merge</button>
+            <!--            
+            The go button is part of the quiz structure its event 
+            listener is added programatically-->
+            <button id="go">Ok</button>
+            <button onclick="crud.page.current.record.cancel()" id="cancel">Cancel</button>
+        </div>
+    </body>
+</html>

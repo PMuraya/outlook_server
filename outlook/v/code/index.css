@@ -1,0 +1,77 @@
+html {
+  height: 100%;
+}
+/*Grid design and styling procedure*/
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 5px;
+  display: grid;
+  gap: 5px;
+  grid-template-columns: 20% 60% 20%;
+  grid-template-rows: 10% 40% 40% 10%;
+  grid-template-areas:
+    "header header header"
+    "why content welcome"
+    "services content whatsup"
+    "footer footer footer";
+}
+.header {
+  grid-area: header;
+  display: grid;
+  grid-template-columns: 30% 70%;
+  background-color: thistle;
+}
+#logo {
+  grid-row: header;
+}
+.heading {
+  grid-row: header;
+}
+#welcome {
+  grid-area: welcome;
+}
+#why {
+  grid-area: why;
+   background-color: thistle;
+}
+#services {
+  grid-area: services;
+   background-color: thistle;
+}
+#content {
+  grid-area: content;
+}
+#whatsup {
+  grid-area: whatsup;
+  background-color: thistle;  
+}
+.footer {
+  grid-area: footer;
+  display: grid;
+  grid-template-columns: 30% 60% 10%;
+  background-color: thistle;  
+}
+#developer {
+  grid-row: footer;
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
+#signature {
+  grid-row: footer;
+  place-self: center;
+}
+#company {
+  grid-row: footer;
+  place-self: center;
+}
+#login {
+  text-decoration: none;
+  width: 100px;
+  height: 30px;
+}
+.img_dev {
+  width: 8em;
+  height: 8em;
+}

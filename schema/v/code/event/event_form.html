@@ -1,0 +1,199 @@
+<html>
+
+<head>
+    <title>Event Form Planner</title>
+    <link rel="stylesheet" href="../templates/general.css">
+</head>
+
+<body>
+    <h2>Event Planning</h2>
+    <label>
+        <span>Name:</span>
+        <input maxlength="50" size="50" type="text" data-dbname="mutall_users" data-ename="event" name="id"
+            value="Hiking Mt.Kenya" id="name">
+    </label><br>
+    <span>Description</span>
+    <textarea maxlength="200" data-dbname="mutall_users" data-ename="event" name="name" id="description">
+       As the Chairman to Wanamlima group, I would like to invite you all to a sitting to plan for the Mt.Kenya visit trip 
+       scheduled to occur between the 12th to 17th December at Mt.Kenya Mountain Reserve.
+        </textarea>
+    <div>
+        <span>Start Date:</span>
+        <input data-dbname="mutall_users" data-ename="event" name="start_date" type="date" value="2022-11-19"
+            id="start_date">
+        <span>End Date:</span>
+        <input data-dbname="mutall_users" data-ename="event" name="end_date" type="date" value="2022-11-17"
+            id="end_date">
+    </div>
+
+    <fieldset>
+        <legend>Is this event contributory ?</legend>
+        <label>
+            <input data-dbname="mutall_users" data-ename="event" name="contributory" type="radio" id="no_contribution"
+                value="no">
+            No
+        </label>
+        <label>
+            <input data-dbname="mutall_users" data-ename="event" name="contributory" type="radio" id="with_contribution"
+                value="yes">
+            Yes
+        </label>
+        <fieldset id="mandatory" hidden>
+            <legend>Is this contribution mandatory ?</legend>
+            <label>
+                <input data-dbname="mutall_users" data-ename="event" name="mandatory" type="radio" id="not_mandatory"
+                    value="no" />
+                No
+            </label>
+            <label>
+                <input data-dbname="mutall_users" data-ename="event" name="mandatory" type="radio" id="is_mandatory"
+                    value="yes" />
+                Yes
+            </label>
+            <fieldset id="set_amount" hidden>
+                <label>Amount:
+                    <input type="text" id="mandatory_amount" name="amount" value="ksh.10,000">
+                </label>
+            </fieldset>
+        </fieldset>
+        <!--
+                    If an event is contributory, it must include a mode of payment
+            -->
+
+    </fieldset>
+
+    <fieldset id="schedule">
+        <legend>Do you want to schedule this event?</legend>
+        <label>
+            <input data-dbname="mutall_users" data-ename="event" name="scheduler" type="radio" id="no_schedule"
+                value="no">
+            No
+        </label>
+        <label>
+            <input data-dbname="mutall_users" data-ename="event" name="scheduler" type="radio" id="yes_schedule"
+                value="yes">
+            <span>Yes</span>
+        </label>
+        <fieldset id="scheduler" hidden>
+            <div id="repetitive">
+                <table id="cron" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Command</th>
+                            <th>Message</th>
+                            <th>Recursion</th>
+                            <th>Receivers</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="name">
+                                <label>
+                                    <input type="text" class="activity_name" value="Memoranda">
+                                </label>
+                            </td>
+                            <td class="command">
+                                <label>
+                                    <input type="text" class="activity_command" value="command">
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    <textarea
+                                        class="recursion">Meeting to initiate and plan the activities on the Hike</textarea>
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    <textarea class="recursion">
+                                        {"repetitive":"no","datetime":"2022-06-16"}
+                                        </textarea>
+                                </label>
+                            </td>
+                            <td>
+                                <button class="recipient_type">recipient</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="name">
+                                <label>
+                                    <input type="text" class="activity_name" value="Concession">
+                                </label>
+                            </td>
+                            <td class="command">
+                                <label>
+                                    <input type="text" class="activity_name" value="command">
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    <textarea
+                                        class="recursion">The meeting to plan the trip to Mount Kenya will be held tomorrow at 5:00p.m at Mutall Business Center, 2nd Floor, Rm 31</textarea>
+                                </label>
+                            </td>
+                            <td>
+                                <label>
+                                    <textarea class="recursion">
+                                        {"repetitive":"yes","datetime":"2022-11-17","frequency":"15 18 * * 4"}
+                                        </textarea>
+                                </label>
+                            </td>
+                            <td>
+                                <button class="recipient_type">recipient</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button id="add_event">add activity</button>
+            </div><br>
+        </fieldset>
+        <fieldset id="inform">
+            <legend>Should members be informed of this event ?</legend>
+            <label>
+                <input data-dbname="mutall_users" data-ename="event" name="message" value="no" type="radio">
+                No
+            </label>
+            <label>
+                <input data-dbname="mutall_users" data-ename="event" name="message" value="yes" type="radio">
+                <!--if yes the message
+                        should send the description to the users-->
+                <span>Yes</span>
+            </label>
+        </fieldset>
+    </fieldset>
+    <fieldset id="make_payment" hidden>
+        <legend>Do you want to make a payment</legend>
+        <label>
+            <input data-dbname="mutall_users" data-ename="event" value="no" name="payment" type="radio"
+                id="no_payment" />
+            No
+        </label>
+        <label>
+            <input data-dbname="mutall_users" data-ename="event" value="yes" name="payment" type="radio"
+                id="yes_payment" />
+            Yes
+        </label>
+        <fieldset id="payment_modes" hidden>
+            <legend>Select mode of payment</legend>
+            <input name="mode" type="radio" value="m_pesa">M-PESA
+            <input name="mode" type="radio" value="paypal">Paypal
+            <input name="mode" type="radio" value="equity_bank">Equity Bank
+
+            <label id="mand">
+                Amount:
+                <input data-dbname="mutall_users" data-ename="event" name="amount" type="number" value="2500"
+                    id="paid_amount">
+                <!--
+                            The user needs to first pay so that the payment can be verified prior to saving the event.
+                    -->
+            </label>
+            <button id="make_payment">Pay</button>
+        </fieldset>
+    </fieldset>
+    <button id="send">Send</button>
+    <button id="cancel">Cancel</button>
+    <button id="go" hidden></button>
+</body>
+
+</html>
