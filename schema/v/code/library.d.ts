@@ -440,7 +440,17 @@ export class path{
     rename(to:path):void;
     //
     //Read and return the contents of the current path
-    get_file_contents():string;        
+    get_file_contents():string; 
+    //sharon copy
+    //
+    //Save the file contents
+    put_file_contents(text:string):number|false;      
+     //copy the contents of the current path to the given desetination. The
+     //retirn value is true if successful; otherwise it is false
+    copy(destination:string):boolean;
+    //
+    //Test if the guven path exist or not
+    exists(name:string):boolean; 
 }
 //
 //A message recipient is either selected individuals (of the user's gropu) or 

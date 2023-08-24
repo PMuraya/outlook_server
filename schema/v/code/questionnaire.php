@@ -660,7 +660,7 @@ class questionnaire extends schema {
             //
             //Get the table's class name; it must exist
             if (!isset($Itable->class_name)) {
-                $errors[] = new myerror("Class name not found for table " . json_encode($Itable));
+                $errors[] = new myerror("Class name not found for table " . json_decode($Itable));
                 //
                 return;
             }
@@ -1252,11 +1252,11 @@ namespace mutall\capture;
         //that our OO model comprising of a database-entity-column-artefact needs
         //revision. For instance, capture/artefact does not extend a /table as 
         //one would expect. Instead, capture/artefact has a /table source. 
-        //Likewise, capture/column does not extend /column; the latter is a 
+        //Likewise, capture/column doe not extend /column; the latter is a 
         //source in the former.
         function write(/* row|null */$row): ans {
             //
-            //Do the writing, according to the source column.
+            //Do the write, according to the source column.
             $exp = match(true){
                 //
                 //Write an attribute involves simplifying its input/capture 
@@ -1300,17 +1300,10 @@ namespace mutall\capture;
             //Ensure that the attribute's size for identifiers
             //is less or equal to the size of the column. 
             if (
-                isset($this->exp) 
-                && $this->exp instanceof scalar 
-                && $this->source->data_type === "varchar" 
-                && $this->source->is_id() //????
-                && ($size = strlen(strval($this->exp->simplify()))) > $this->source->length
-            ){
-                $exp = new \mutall\myerror(
-                    "The size of column " 
-                    . $this->source->full_name()
-                    . "is $size which is larger than " 
-                    . $this->source->length);
+                    isset($this->exp) && $this->exp instanceof scalar && $this->source->data_type === "varchar" && $this->source->is_id() && ($size = strlen(strval($this->exp->simplify()))) > $this->source->length
+            ) {
+                $exp = new \mutall\myerror("The size of column " . $this->source->full_name()
+                        . "is $size which is larger than " . $this->source->length);
             }
             //
             //If the expression is set, simplify it
@@ -1319,16 +1312,11 @@ namespace mutall\capture;
             }
             //
             //The attribute's value not set; try the default.
-            elseif(
-                $this->source->default !== 'NULL' 
-                && !is_null($this->source->default)
-            ) {
+            elseif ($this->source->default !== 'NULL' & !is_null($this->source->default)) {
                 //
                 //Parse the default value to get an expression.
                 $exp = $this->parse_default($this->source->default);
-            }else {
-                //
-                //The attribute value is missing
+            } else {
                 //
                 //Get this column's entity name
                 $ename = $this->entity->name;

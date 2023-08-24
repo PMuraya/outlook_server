@@ -226,9 +226,9 @@ export abstract class io extends view.view{
     //are created is the same as that of displaying them. You override
     //this method if you want to change the order. See the file_io example
     show(): void {}
-    //
-    //Create an io instance using the optional io type. If the io type is not 
-    //given, deduce it from the database column's data type.
+    
+    //Create an io value using the optional io type. If the io type is not 
+    //given, deduce it from the database column's data type
     static create_io(
         // 
         //The parent of the input/output elements of this io. 
@@ -238,7 +238,7 @@ export abstract class io extends view.view{
         //deduce it from the column
         type?:io_type,
         // 
-        //The column associated with this io, if availab,e. 
+        //The column associated with this io. 
         col?: schema.column
     ): io{
         //
@@ -249,25 +249,23 @@ export abstract class io extends view.view{
         //If the result is an io, return it
         if (result instanceof io) return result;
         //
-        //Use the resulting io type to formulate the  io instance
+        //Use the resulting io type to formulate the  io
         switch(result){
-            //
-            //For simple io types that use the standard HTML input element...
+            //For simple io types that use the standard inout tag...
             case 'date':
             case 'number':
             case 'email':return new input(result, anchor, col);
             //
             //For the more sophisticated io types....
             //
-            //A single checkbox used for representing a boolean io
+            //A single checkbox used for represing a boolean io
             case 'checkbox': return new checkbox(anchor, col);
             //
-            //Single or multiple choices implemented as a set of radio or 
+            //Single or multiple choices implement as a set of radio or 
             //checkbox inputs
             case 'checkboxes': return new choices(anchor, col, 'multiple');
             case 'radios': return new choices(anchor, col, 'single');
             //
-            //Inputs collected using a textaera element
             case 'textarea': return new textarea(anchor, col);
             //
             //Read only fields
