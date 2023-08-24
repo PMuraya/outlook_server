@@ -1,38 +1,35 @@
 //
+//Resolve the iquestionnaire
+import * as quest from '../../../schema/v/code/questionnaire.js';
+//
+//Resolve the modules.
+import * as mod from './module.js';
+//
+import * as outlook from "./outlook.js";
+//
+//Import app class.
+import * as app from "./app.js";
+//
 import * as schema from '../../../schema/v/code/schema.js';
 //
 import * as server from '../../../schema/v/code/server.js';
 //
-//Resolve the iquestionnaire
-import * as quest from '../../../schema/v/code/questionnaire.js';
-//
-import {view} from "./view.js";
-//
-import {baby, popup} from "./outlook.js";
-//
-//Import app class.
-import {app, user, business} from "./app.js";
-//
-//Resolve the modules.
-import * as mod from './module.js';
-
-//
 //Complete the level one registration of the user after logging into the system.
 export class complete_lv1_registration
-    extends baby<{role_ids:Array<string> , business: business} | undefined>
+    extends outlook.baby<{role_ids:Array<string> , business: outlook.business} | undefined>
     implements mod.questionnaire
 {
     //
-    public user?:user;
+    public user?:outlook.user;
     //
     //The current application's database name
-    get app_dbname(){return app.current.dbase!.name};
+    get app_dbname(){return app.app.current.dbase!.name};
     //
     //The user database name;
-    get user_dbname(){return app.current.config.user_subject.dbname; };
+    get user_dbname(){return app.app.current.config.user_subject.dbname; };
     //
     //construct the reg class
-    constructor(app: app) {
+    constructor(app: app.app) {
         //
         //Call the super class constructor with the file name.
         super(app,'/outlook/v/code/lv1_reg.html');
@@ -42,7 +39,7 @@ export class complete_lv1_registration
     get_layouts(): Array<quest.layout> {
         //
         //Get the user that is currently logged in.
-        const user = app.current.user;
+        const user = app.app.current.user;
         //
         //We assume that the user must have logged in successfuly
         if (user===undefined) 
@@ -76,7 +73,7 @@ export class complete_lv1_registration
     }
     //
     //Link the application and user databases.
-    *link_to_mutall_users(user:user, business:business, roles:Array<string>): Generator<quest.label> {
+    *link_to_mutall_users(user:outlook.user, business:outlook.business, roles:Array<string>): Generator<quest.label> {
         //
         //1. Link the user table to as many tables in the application database as
         //there are roles
@@ -96,7 +93,7 @@ export class complete_lv1_registration
         //
         //The table name that matches business a database can be
         //derived from the data model. 
-        const entity = app.current.get_business_entity();
+        const entity = app.app.current.get_business_entity();
         //
         //Compile the business label usoing the application database and 
         //assuming that the entity has id column that uniquely identifes a 
@@ -107,7 +104,7 @@ export class complete_lv1_registration
     //Collect the data (i.e., member) that links the user to a business. 
     //Get business data. A member is uniquely defined by a user and the 
     //a business 
-    *get_business_data(business: business): Generator<quest.layout> {
+    *get_business_data(business: outlook.business): Generator<quest.layout> {
         //
         //2. Collect the business id
         yield[this.user_dbname, 'business', [], 'id', business.id];
@@ -131,7 +128,7 @@ export class complete_lv1_registration
     *get_subscription_data(roles:Array<string>): Generator<quest.label>{
         //
         //Collect the application id.
-        yield[this.user_dbname, 'application', [], 'id', app.current.id];
+        yield[this.user_dbname, 'application', [], 'id', app.app.current.id];
         //
         //Collect the players labels.
         //
@@ -167,12 +164,12 @@ export class complete_lv1_registration
             //end-date is hard-wired into the database, we need at least one label 
             //referring to the subscription. That is a design feature of the data 
             //writer module
-            yield[this.user_dbname, 'subscription', [i], 'end_date', view.end_of_time];
+            yield[this.user_dbname, 'subscription', [i], 'end_date', outlook.view.end_of_time];
         }; 
     }
     //
     //Get the result.
-    async get_result(): Promise<{role_ids:Array<string> , business: business}> {
+    async get_result(): Promise<{role_ids:Array<string> , business: outlook.business}> {
         return this.result!;
     }
     //
@@ -185,13 +182,13 @@ export class complete_lv1_registration
         const role_ids:Array<string> = this.get_input_choices('roles');
         //
         //1.3 Collect the business .
-        const business:business = await this.get_business();
+        const business:outlook.business = await this.get_business();
         //
         //Save the role and business to the result.
         this.result = {role_ids, business};
         //
         //2. Save the data to the database.
-        const save = await app.current.writer.save(this);
+        const save = await app.app.current.writer.save(this);
         //
         //3. Return the result if the was successful.
         return save;
@@ -199,7 +196,7 @@ export class complete_lv1_registration
     //
     //Get the business from the current page. Its either from the selector
     //as a primary key or from direct user input as name and id.
-    async get_business(): Promise<business> {
+    async get_business(): Promise<outlook.business> {
         //
         //Get the select element.
         const pk = this.get_selected_value('organization');
@@ -218,13 +215,13 @@ export class complete_lv1_registration
         }
         //
         //from a selector, use the pk to get the id of the business..
-        const business:business = await this.get_business_info(pk);
+        const business:outlook.business = await this.get_business_info(pk);
         //
         return business;
     }
     //
     //Get the id from the given primary key of the business.
-    async get_business_info(pk: string):Promise<business> {
+    async get_business_info(pk: string):Promise<outlook.business> {
         //
         //formulate the query to get the business id.
         const sql = `
@@ -264,7 +261,7 @@ export class complete_lv1_registration
     fill_user_roles() {
         //
         //Get the current application database. It must be set
-        const dbase = app.current.dbase;
+        const dbase = app.app.current.dbase;
         if (dbase===undefined) 
            throw new schema.mutall_error(`No database found for this application`);
         //
@@ -296,20 +293,20 @@ export class complete_lv1_registration
 //THis class allows a user who wants to create a new business to provide
 // the business name and the business_id to support login incase the business is
 //not among the ones listed.
-class register_business extends popup<business>{
+class register_business extends outlook.popup<outlook.business>{
     //
     //constructor
     constructor(
         //
         //A business is defined by the business_name and the business_id
-        public business?: business
+        public business?: outlook.business
     ) {
         super("new_business.html");
         //
     } 
     //
     //Return all inputs from a html page and show cases them to a page
-    async get_result(): Promise<business> {return this.result!;}
+    async get_result(): Promise<outlook.business> {return this.result!;}
     //
     //Collect and check the recursion data and set the result.
     async check(): Promise<boolean> {

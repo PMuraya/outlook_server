@@ -1,26 +1,24 @@
 //
+import * as outlook from "./outlook.js";
+//
+//Import app class.
+import * as app from "./app.js";
+//
 import * as schema from '../../../schema/v/code/schema.js';
 //
 import * as server from '../../../schema/v/code/server.js';
 //
-import { view } from "./view.js";
-//
-import { baby, popup } from "./outlook.js";
-//
-//Import app class.
-import { app } from "./app.js";
-//
 //Complete the level one registration of the user after logging into the system.
-export class complete_lv1_registration extends baby {
+export class complete_lv1_registration extends outlook.baby {
     //
     user;
     //
     //The current application's database name
-    get app_dbname() { return app.current.dbase.name; }
+    get app_dbname() { return app.app.current.dbase.name; }
     ;
     //
     //The user database name;
-    get user_dbname() { return app.current.config.user_subject.dbname; }
+    get user_dbname() { return app.app.current.config.user_subject.dbname; }
     ;
     //
     //construct the reg class
@@ -34,7 +32,7 @@ export class complete_lv1_registration extends baby {
     get_layouts() {
         //
         //Get the user that is currently logged in.
-        const user = app.current.user;
+        const user = app.app.current.user;
         //
         //We assume that the user must have logged in successfuly
         if (user === undefined)
@@ -89,7 +87,7 @@ export class complete_lv1_registration extends baby {
         //
         //The table name that matches business a database can be
         //derived from the data model. 
-        const entity = app.current.get_business_entity();
+        const entity = app.app.current.get_business_entity();
         //
         //Compile the business label usoing the application database and 
         //assuming that the entity has id column that uniquely identifes a 
@@ -123,7 +121,7 @@ export class complete_lv1_registration extends baby {
     *get_subscription_data(roles) {
         //
         //Collect the application id.
-        yield [this.user_dbname, 'application', [], 'id', app.current.id];
+        yield [this.user_dbname, 'application', [], 'id', app.app.current.id];
         //
         //Collect the players labels.
         //
@@ -159,7 +157,7 @@ export class complete_lv1_registration extends baby {
             //end-date is hard-wired into the database, we need at least one label 
             //referring to the subscription. That is a design feature of the data 
             //writer module
-            yield [this.user_dbname, 'subscription', [i], 'end_date', view.end_of_time];
+            yield [this.user_dbname, 'subscription', [i], 'end_date', outlook.view.end_of_time];
         }
         ;
     }
@@ -184,7 +182,7 @@ export class complete_lv1_registration extends baby {
         this.result = { role_ids, business };
         //
         //2. Save the data to the database.
-        const save = await app.current.writer.save(this);
+        const save = await app.app.current.writer.save(this);
         //
         //3. Return the result if the was successful.
         return save;
@@ -252,7 +250,7 @@ export class complete_lv1_registration extends baby {
     fill_user_roles() {
         //
         //Get the current application database. It must be set
-        const dbase = app.current.dbase;
+        const dbase = app.app.current.dbase;
         if (dbase === undefined)
             throw new schema.mutall_error(`No database found for this application`);
         //
@@ -284,7 +282,7 @@ export class complete_lv1_registration extends baby {
 //THis class allows a user who wants to create a new business to provide
 // the business name and the business_id to support login incase the business is
 //not among the ones listed.
-class register_business extends popup {
+class register_business extends outlook.popup {
     business;
     //
     //constructor

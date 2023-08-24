@@ -48,6 +48,16 @@ export class viewer extends outlook.baby {
         //Do not leave this page just yet
         return false;
     }
+    //
+    //
+    async show_panels() {
+        //
+        //The for loop is used so that the panels can throw
+        //exception and stop when this happens
+        for (const panel of this.panels.values()) {
+            await panel.paint();
+        }
+    }
 }
 //The popup used for collecting test data
 class test extends outlook.baby {
@@ -69,5 +79,10 @@ class test extends outlook.baby {
     //Rteurn the result obtained during check
     async get_result() {
         return this.result;
+    }
+    //
+    //
+    show_panels() {
+        throw new Error("Method not implemented.");
     }
 }

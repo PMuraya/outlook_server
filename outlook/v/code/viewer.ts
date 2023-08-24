@@ -5,7 +5,7 @@ import * as outlook from "./outlook.js"
 import * as schema from "../../../schema/v/code/schema.js" 
 
 /*
- * The viewer class supports disply of html pages during the design phase
+ * The viewer class supports disply of html pages during the design phase 
  */
  export class viewer extends outlook.baby<void>{
      //
@@ -51,6 +51,16 @@ import * as schema from "../../../schema/v/code/schema.js"
          //Do not leave this page just yet
          return false;
      }
+     //
+     //
+     async show_panels(): Promise<void> {
+        //
+        //The for loop is used so that the panels can throw
+        //exception and stop when this happens
+        for (const panel of this.panels.values()) {
+            await panel.paint();
+        }
+    }
  }
  //
  //For now, the test data is booean, denoting either good or bac
@@ -79,4 +89,9 @@ type test_result = "ok" | schema.mutall_error;
      async get_result(){
          return this.result!;
      }
+    //
+    //
+    show_panels(): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
  }

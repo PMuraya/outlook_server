@@ -1,3 +1,7 @@
+//Resolve the iquestionnaire
+import * as quest from '../../../schema/v/code/questionnaire.js';
+//
+import * as outlook from '../../../outlook/v/code/outlook.js';
 //
 import * as server from '../../../schema/v/code/server.js';
 //
@@ -6,11 +10,8 @@ import * as schema from '../../../schema/v/code/schema.js';
 //Resolve reference to the library
 import * as lib from "../../../schema/v/code/library";
 //
-import {business} from './app.js';
-
-//Resolve the iquestionnaire
-import * as quest from '../../../schema/v/code/questionnaire.js';
-
+//Resolve references to the appplication
+import * as app from "../../../outlook/v/code/app.js";
 //
 //This class is the home of all methods that are common to all our modules.
 //For instance, all modules should be able to report errors to the user.
@@ -302,7 +303,7 @@ export interface questionnaire {
 export interface message {
     //
     //Get the business of the currently logged in user
-    get_business(): business;
+    get_business(): outlook.business;
     //
     //Get the content of the message. It comprises of a subject and a body
     get_content(): { subject: string, body: string };

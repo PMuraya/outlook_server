@@ -1,0 +1,95 @@
+html{
+    background-color:azure;
+    
+
+}
+body{
+    margin:0;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 28px;
+    /*to enable the  ability*/
+    overflow-y: scroll;
+/*    font-family: webkit-pictograph;*/
+}
+/*scroll while the scroll bar is hidden*/
+body::-webkit-scrollbar{
+    display: none;
+}
+#content{
+    background-color:azure;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+    align-items: baseline;  
+}
+.buttons{
+    display:flex;
+    flex-direction: row;
+    justify-content: center;
+}
+button
+{
+    text-align: center;
+    display:flex;
+    flex-direction: row;
+    width: auto;
+    height: 5vh;
+    border: none;
+    font-size: 24px;
+    border-radius:15px;
+    margin-top: 10px;
+    margin-left: 20px;
+    /* box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2), 0 6px 20px 0 rgba(0,0,0,0.19); */
+    cursor: grab;
+
+}
+.btn--{
+    transition: background-color 0.5s;
+}
+/*styling the buttons, namely the go, cancel, and maerge*/
+.btn--:hover{
+    background-color: gold;
+}
+input[type="radio"]{
+    size: 20px;
+    transition: background-color 0.5s;
+}
+.input:hover{
+    background-color: mediumspringgreen;
+}
+
+.button:active{
+    background-color: peachpuff;
+    transform: translateY(4px); 
+
+}
+/*use media query based on phone display*/
+@media all and (min-device-width:50vw){
+    #menu{width: 20vw; float: inside;}
+}
+span{
+    margin:0 auto;
+    padding:20px 15px;
+}
+table{
+    text-align: center;
+    margin-left: 50px;
+    border-collapse: collapse;
+    border:grey 2px solid;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif ;
+    letter-spacing: 1px;
+    font-size: 0.7em;
+}
+/*making the thead sticky*/
+thead{
+    background-color: gold;
+    position:sticky;
+    border-bottom: 2px solid black;
+    top:0;
+    z-index: 1;
+}
+th,td{
+    border:grey 2px solid;
+    padding: 10px 10px;
+}

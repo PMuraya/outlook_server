@@ -28,8 +28,4 @@ Any element of the error class should be shown in red*/
     color: red;
 }
 
-/*
-Labels are displayed as blocks*/
-label{
-    display:block;
-}
+
