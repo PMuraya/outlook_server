@@ -72,7 +72,7 @@ export class theme extends outlook.panel {
     constructor(
     //
     //The database and entity name that is displayed in this 
-    //theme panel. If null, we take the subject of the current application
+    //theme panel. If null, we take the subject of the curreny application
     subject, 
     // 
     //The css for retrieving the html element where to display 
@@ -88,8 +88,6 @@ export class theme extends outlook.panel {
         this.css = css;
         this.base = base;
         this.selection = selection;
-        //
-        //Set the subject (if it is null) to that of the application,
         this.subject = subject === null ? app.app.current.subject : subject;
     }
     //
@@ -109,7 +107,7 @@ export class theme extends outlook.panel {
         //
         //Constructor args of an editor class are ename and dbname 
         //packed into a subject array in that order.
-        [this.subject.ename, this.subject.dbname], 
+        this.subject, 
         //
         //Method called to retrieve editor metadata on the editor class.
         "describe", 
@@ -533,7 +531,7 @@ export class theme extends outlook.panel {
         // 
         //The entity name that drives this query comes from the subject of this 
         //application
-        const ename = `\`${this.subject.ename}\``;
+        const ename = `\`${this.subject[0]}\``;
         //
         //Complete the sql using the offset and the limit.
         const complete_sql = 
@@ -545,7 +543,7 @@ export class theme extends outlook.panel {
         return await server.exec("database", 
         //
         //dbase class constructor arguments
-        [this.subject.dbname], 
+        [this.subject[1]], 
         //
         "get_sql_data", 
         //
@@ -586,7 +584,7 @@ export class theme extends outlook.panel {
         else {
             //Get the primary key column; It is indexed using this theme's
             // subject name.
-            const column = row[this.subject.ename];
+            const column = row[this.subject[0]];
             //
             //The primary key column is a tupple of two values: the autonumber 
             //and the friendly components packed as a single string.
@@ -646,7 +644,7 @@ export class theme extends outlook.panel {
         //
         //Destructure the subject to get the entity name; its the 
         //first component. 
-        const ename = this.subject.ename;
+        const [ename] = this.subject;
         // 
         //Get the column name that matches this td. 
         const col_name = this.col_names[cellIndex];
@@ -657,9 +655,8 @@ export class theme extends outlook.panel {
         //Get the anchor for the io
         const anchor = { element: td, page: this.base };
         //
-        //Create and return the io for this column when we dont know
-        //its io type.
-        const Io = io.io.create_io(anchor, undefined, col);
+        //Create and return the io for this column.
+        const Io = io.io.create_io(anchor, col);
         // 
         return Io;
     }

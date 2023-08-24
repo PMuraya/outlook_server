@@ -1,0 +1,91 @@
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    display: grid;
+    grid-template-rows: 1fr 9fr;
+    grid-template-columns: 1fr 3fr;
+}
+
+#header {
+    /* starts on the first horizontal line, and ends on the third horizontal line */
+    grid-column: 1/4;
+    /* starts on the first horizontal line, and ends on the second horizontal line */
+    grid-row: 1/2;
+    background-color: antiquewhite;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 900;
+}
+
+#tree {
+    /* starts on the first horizontal line, and ends on the second horizontal line */
+    grid-column: 1/2;
+    /* starts on the second horizontal line, and ends on the third horizontal line */
+    grid-row: 2/3;
+    background-color: lightgoldenrodyellow;
+    resize: horizontal;
+    min-width: 330px;
+    max-width: 830px;
+    overflow-x: auto;
+    overflow-y: auto;
+    
+}
+
+#list {
+    /* starts on the second horizontal line, and ends on the third horizontal line */
+    grid-column: 2/3;
+    /* starts on the second horizontal line, and ends on the third horizontal line */
+    grid-row: 2/3;
+    background-color: bisque;
+    overflow-y:auto;
+    overflow-x: auto;
+}
+
+/*
+The images are the same height as the current font*/
+img{   height:1em; }
+
+/*
+Align the tree selector, options and option  with their sibblings*/
+.selector{display:inline; }
+.options{display:inline; }
+.option{display:inline; }
+
+/*
+Style the tree attribute values in green, so they stand out from the node*/
+.option .value{color:green;}
+
+/*
+Indent the children by 2 times the font sizes*/
+.children{margin-left: 2em}
+
+/*
+Specify border for the table*/
+td{
+    border: 1px solid lightgrey;
+}
+/*
+If a row (tr) is in edit mode, then switch off the normal mode for all her 
+descendants*/
+.edit .normal{
+    display: none;
+}
+/*
+If a tr is in normal mode, then switch off the edit mode for all her
+descendants*/
+.normal .edit{
+    display:none;
+}
+
+/*
+Hovered-on selections are shown with a cyan background*/
+.hovered{background-color: cyan}
+
+/*
+Selected selections are show with a blue background and white text*/
+.selected{background-color: blue; color:white;}

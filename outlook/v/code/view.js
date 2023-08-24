@@ -92,8 +92,7 @@ export class view {
     }
     //
     //Returns the value from an identified input or textarea element.
-    //The function will return null (rather than '' or fail) if there is no input 
-    //value. It returns Error if the value is empty and required
+    //The function will fail if there is no input value.
     get_input_value(id) {
         //
         //Get the identified element.
@@ -103,42 +102,30 @@ export class view {
         if (!(elem instanceof HTMLInputElement || elem instanceof HTMLTextAreaElement))
             throw new schema.mutall_error(`'${id}' is not an input or textarea element`);
         //
-        //The desired value is.
-        let value = elem.value === "" ? null : elem.value;
-        //
-        //If the value is required and is null, then return an error
-        const value2 = elem.hasAttribute('required') && value === null
-            ? new Error(`${id} is required`) : value;
+        //There must be a value in the element.
+        if (elem.value === "")
+            throw new schema.mutall_error(`No value found for element '${id}'`);
         // 
-        //Return the desired value.
-        return value2;
+        //Return the input element value.
+        return elem.value;
     }
     //
-    //Returns the value of the checked radio button that has the given name.
-    //Return null if there is no checked radio button. If any of the named 
-    //buttons has a required attribute, then an error is retirned if none is 
-    //checked
+    //Returns the value of the checked radio button that have this given name.
+    //There must be atleast one checked value.
     get_checked_value(name) {
         //
         //Get the radio button that matches the given name and is checked.
-        const radio = this.document.querySelector(`input[name='${name}']:checked`);
+        const radio = document.querySelector(`input[name='${name}']:checked`);
         //
-        //Do not continue with further checks if there is no checked radio button
-        if (radio === null) {
-            //
-            //Get all the named radio buttons that have a required attribute
-            const buttons = this.document.querySelectorAll(`input[name='${name}'][required]`);
-            //
-            //Required is true if there is at least one required button
-            return (buttons.length > 0) ? new Error(`${name} is required`) : null;
-        }
+        //There must be at least one checked value under the given name.
+        if (radio === null)
+            alert(`No checked value found under this name '${name}'`);
         //
         //Ensure that the radio element is a HTMLInputElement.
         if (!(radio instanceof HTMLInputElement))
             throw new schema.mutall_error(`The input named '${name}' is not a HTMLInputElement`);
         //
-        //The radio button's value must be set. It is a sign a poorly designed form 
-        //if not
+        //The radio button's value must be set.
         if (radio.value === "")
             throw new schema.mutall_error(`No value found for input named '${name}'`);
         //
@@ -224,7 +211,7 @@ export class view {
     get_element(id) {
         //
         //Get the identified element from the current browser context.
-        const element = this.document.getElementById(id);
+        const element = this.document.querySelector(`#${id}`);
         //
         //Check the element for a null value
         if (element === null)
@@ -275,7 +262,7 @@ export class view {
     }
     //
     //This is a general procedure for standardising conversion of dates to mySQL
-    //compatible string format. I stillhave a problem importing from a node_modules
+    //compatible string format. I still a problem importing from a node_modules
     //library. Js won't understand import * as y from "x". It only understands
     //paths of the form: "./x.js" "../x.js", "/a/b/c/x.js". Perhaps its time to
     //learn how to use webpack. For now, use the native Js metod of convering the

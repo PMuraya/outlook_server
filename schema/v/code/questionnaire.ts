@@ -1,84 +1,48 @@
 //Resolve the mutall error class, plus access to the application url
 import * as schema from "./schema.js";
+
+//Define the structure of a questionnaire, Iquestionnaire
 //
-//A layout is a format for presenting data. It is either labeled or tabular. 
-//Here is data laid out in a label format(similar to how envelops are labeled): 
-/*
-name:'muraya';
-address:'474 Kiserian
-----------------------
-name:'kangara'
-address:'896 Kikuyu'
----------------------
-etc
-*/
-//Here is the same data laid out in a tabular layout
-/*
- name       address
- ---------------
- muraya     474 Kiserian
- kangara    896 Kikuyu
- etc
- */
+//A questionnaire is either:-
+export type Iquestionnaire = 
+    //
+    // ...an array of layouts....
+    Array<layout>
+    //
+    //...or a (Mutall) commented Microsoft Excel file name
+    |string;
+//
+//A layout is either labeled or tabular
 export type layout = label|table;
 //
-//A labeled layout is a tuple of 5 elements, of which the first 3 are mandatory;
-//the remainder are optinional. (The justification is that often we use the 
-//dafault alias,[], and working across databases is not common)
+//A labeled layout is a tuple of 5 elements
 //
 //We are considering the use of a .dts file generated from a server to support type 
-//checking of the following label components: dbname, ename and cname against 
-//the available databases in the server.
-export type label = [expression, ename, cname, alias?, dbname?];
+//checking of the following label components: dbname, ename and cname.
+export type label = [dbname, ename, alias, cname, expression];
+
+//A datababase name must exist on the server
 //
 //Assign Peter Kamau to derive the databases from a server needed for
 //describing this type so that Typescript can check the proper use of
-//database, entity, column and index names. Consider a parametrized definition of 
-//e.g., a dbname that is driven by a server structure similar to:-
-/*
-type server = {
-    mutall_users:{              <----------dbname
-        user:{                  <----------ename
-            name:string,        <----------cname
-            password:string
-        }
-    tracker:{intern:.....}
-    rentize:{client:
-}    
- 
-Tpyes dbname, cname and ename can be then be expressed in terms of the servers 
-structure. E.g.,
-type dbname = keyof server; 
-type ename<dbname> = keyof server[dbname]
-type cname<dbname, ename> = keyof server[dbname][ename]
-
-The parametrized definition of a label would be:-
-type label<dbname, ename, cname> = [expression, ename<dbname>, cname<bame, ename>, alias?, dbname?>]
-
-This definition would allow teh checking of labels against the databases on the 
-sever, making data loading safer.
-
-For now, the dbname, dname and ename are simply strings
-*/
-//The name of a database that must exist on the server
-type dbname = string; 
+//database, entity, column and index names
+type dbname = string; //"mutall_users"|"tracker"|"rentize"|"postek"|"chama"|"real_estate";
 //
-//The database table (a.k.a., entity) name where the data is to be stored
+//The database table, a.k.a., entity, where the data is stored
 type ename = string;
 //
 //The column name where the data is stored in an entity
 type cname = string;
 //
-//An alias ia an id, such that its combination a dbname, ename, and cname is
-//used to form a unique index of an expression The questionnaire loading system
-//requires that all labeled expressions being loaded must be uniquely identified
-//by the dbname/ename/cname/questionnaire combination. An alias is designed
-//as an array to support loading of hierarchical data.
+//A context that uniquely describes the entity. An artefact is acontextualized  database 
+//table
 type alias = Array<schema.basic_value>;
 //
-//An expression is the data to be stored in the database. It may be the simple
-//basic type or a named function implemented in PHP
-export type expression = 
+//The arguments of an expression is an array of any type
+type Args = any[];
+//
+//The data to be stored in the database, specified as an expression. An expression may be:-
+type expression = 
     //
     //...a basic Typescript value...
     schema.basic_value
@@ -87,8 +51,6 @@ export type expression =
     //reference to a PHP class and the arguments should match those of the 
     //(class) constructor
     |[string, ...any]
-
-    //Add examples of typical usage of a label
     
 //-------------------------------------------------------------------
 //    
@@ -136,8 +98,6 @@ export interface matrix extends table{
     ]
 }
 
-
-
 //
 
 //The output from loading a questionnaire is the Imala data structure.
@@ -167,4 +127,9 @@ export type Imala =
             rows:Array<label> 
         }>
    }
+//
+//The errors retuned in the label_errors part of teh Imala structure
+//is designed to be rich enough for reporting. For now,i its a simple string      
+type error = string;
+//
             

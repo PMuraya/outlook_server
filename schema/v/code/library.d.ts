@@ -264,14 +264,11 @@ export class tracker{
 //The questionnaire format for loading large tables
 export class questionnaire{
     //
-    constructor(dbname:string);
+    constructor(milk:quest.Iquestionnaire|string/*excel_filename*/);
     //
     //The general style of loading that data tat can be customised
     //to other types, e.g., common, user_inputs, etc.
     load(
-        //
-        //Array of input data layouts
-        layouts:Array<layout>,
         //
         //XML file for logging the loadin process
         xmlfile:string="log.xml",
@@ -284,15 +281,12 @@ export class questionnaire{
     //report
     load_common(
         //
-        //Array of input data layouts
-        layouts:Array<layout>,
-        //
-        //XML file for logging the loading process
+        //XML file for logging the loadin process
         xmlfile:string="log.xml",
         //
-        //Error file for logging table loading errors
+        //Error file for logging table loading exceptions
         errorfile:string="file.html"
-    ):string/*'Ok'|string as html report*/;
+    ):string/*html report*/;
     
     //
     //Load user inputs from a crud page, returning a result fit for

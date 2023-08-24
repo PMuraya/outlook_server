@@ -1,7 +1,6 @@
 <html>
     <head>
         <title>Login</title>
-        <link rel="stylesheet" href="/outlook/v/code/general.css" />
         <script>
             //
             //Show/hide credentials as required. 
@@ -47,12 +46,13 @@
             <fieldset id="credentials">
                 <legend> Credentials:</legend>
                 <label>
-                    User name<input 
-                        type="text" 
-                        id="name"
-                        value="Peter Kamau"
+                    E-mail<input 
+                        type="email" 
+                        id="email"
+                        value="camilus@gmail.com"
                         required
-                        />
+                        >
+                    
                     <span class="report"> * </span>
                 </label>
                 <label>
@@ -60,7 +60,7 @@
                         type="password" 
                         id="password"
                         required
-                        value="pk"
+                        value="cam"
                         >
                     <span class="report"> * </span>
                 </label>
@@ -76,7 +76,7 @@
                     checked
                     value="login">
                 
-        </label>
+            </label>
         <label>
                 Register
                 <input 
@@ -85,7 +85,6 @@
                     value="register">
             </label>
        </fieldset>
-        <div id="report" class="error"></div>
         <button id="go" >Ok</button>
         <button id="cancel" >Cancel</button>
     </body>

@@ -1,6 +1,4 @@
-import { popup } from "./outlook.js";
-//
-import { user } from "./app.js";
+import { popup, user } from "./outlook.js";
 //
 //Resolve the schema classes, viz.:database, columns, mutall e.t.c. 
 import * as schema from "../../../schema/v/code/schema.js";
@@ -8,12 +6,9 @@ import * as schema from "../../../schema/v/code/schema.js";
 //Resolve the server method for backend communication
 import * as server from "../../../schema/v/code/server.js";
 //
-//Resolve referemce to the io
-import * as io from "../../../schema/v/code/io.js";
-//
-//This is a popup page used for authenticating users so 
+//This is a page used for authenticating users so 
 //that they can be allowed to access the application 
-//services. The page takes in a provider and returns a user
+//services. The popup takes in a provider and returns a user
 export class page extends popup {
     // 
     //The authentication provider for this page 
@@ -28,239 +23,167 @@ export class page extends popup {
     //Return the logged in user
     async get_result() {
         //
-        //return teh user, set during tthe chech. I know it is set
-        return this.result;
+        //Check whether the input are valid or not
+        //
+        //Get the provider
+        this.provider = this.retrieve();
+        //
+        //Authenticate to get the user
+        const User = await this.provider.authenticate();
+        //
+        //Compile the login response
+        return User;
     }
     //
-    //Compiles a provider from the user's selection
-    get_provider(provider_id, username, password) {
+    //Retrieves a provider
+    retrieve() {
+        //
+        //Retrieve the checked provider id
+        let values = this.get_input_choices('provider_id');
+        //
+        //Check the values for validity
+        if (values.length !== 1) {
+            throw new schema.mutall_error(`Please select one provider`);
+        }
+        const provider_id = values[0];
+        // 
+        //Retrieve the checked operation id 
+        values = this.get_input_choices('operation_id');
+        //
+        //Check the values for validity
+        if (values.length !== 1) {
+            throw new schema.mutall_error(`Please select one Operation`);
+        }
+        const operation_id = values[0];
         //
         //1. Define the provider
         let Provider;
         //
-        //Set the provider -- depending on the user selection
         switch (provider_id) {
             case "outlook":
-                Provider = new outlook(username, password);
+                //
+                //Retrieve the credentials
+                const email = this.get_element('email').value;
+                //     
+                const password = this.get_element('password').value;
+                //    
+                Provider = new outlook(email, password, operation_id);
                 break;
-            case "google":
-                //Provider = new google(username, password);
-                throw new schema.mutall_error('Google authentication not yet implemented');
-                break;
-            case "facebook":
-                //Provider = new facebook(username, password);
-                throw new schema.mutall_error('facebook authentication not yet implemented');
-                break;
+            default:
+                throw new schema.mutall_error("The selected provider is not yet developed");
         }
         //
         return Provider;
     }
-    //Check if we have the correct data before we close the popup. For instance, 
-    //if the provider is outlook, verify that the required input fields are 
-    //filled in correctly.
+    //Check if we have the correct data before we close, i.e., if the
+    //provider is outlook. See if there are inputs in 
+    //the input fields.
     async check() {
         //
-        //1. Check the inputs; discontinue if there is an issue
+        //1. Proceed only if the provider is outlook.
+        if (!(this.provider instanceof outlook))
+            return true;
         //
-        //Get all the checked inputa
-        const inputs = this.check_inputs();
-        //
-        //Collect the input values
-        const values = Object.values(inputs);
-        //
-        //If there is any input issue, discontinue this check
-        if (values.some(value => value instanceof Error))
-            return false;
-        //
-        //2. Autheticate or register the user
-        //
-        //Define a user, to be completed via registration or authetication.
-        let User;
-        //
-        //Get the users's credentials, i.e., username and password (as strings) 
-        const username = String(inputs.name);
-        const password = String(inputs.password);
-        const provider_id = String(inputs.provider_id);
-        //
-        //Get the service provider
-        const Provider = this.get_provider(provider_id, username, password);
-        //
-        //If the provider is erroneous, report it and discontinue the test
-        if (Provider instanceof Error) {
+        //Define a fuction for identifiyng and notifying empty values
+        const is_valid = (id) => {
             //
-            this.report(true, Provider.message);
+            const elem = this.get_element(id);
             //
-            return false;
-        }
-        //
-        //If the user is a visitor then register him...
-        if (inputs.operation_id === 'register')
-            User = await Provider.register_user();
-        //    
-        //...otherwise, i.e., If this is is a reqular user then use the provider 
-        //to authicate him
-        else
-            User = await Provider.authenticate_user();
-        //
-        //If the user is erroneous then report it as an error
-        if (User instanceof Error)
-            this.report(true, User.message);
-        //   
-        //If the user is valid, set the result login result
-        else
-            this.result = User;
-        //    
-        //Return sucess if the User is valid
-        return User instanceof user;
-    }
-    //Check the login and retirn the inputs as either valid values or error
-    check_inputs() {
-        //
-        return {
-            name: this.get_input_value('name') ?? new Error(`Name must be provided`),
-            password: this.get_input_value('password') ?? new Error(`Password must be provided`),
-            operation_id: this.get_checked_value('operation_id') ?? new Error(`Specify the required operation`),
-            provider_id: this.get_checked_value('provider_id') ?? new Error(`Specify the provider`)
+            const is_empty = ((elem.value === null) || elem.value.length === 0);
+            //
+            //Notify (on the login page) if empty
+            if (is_empty) {
+                //
+                //Get the notification tag; its next to the id
+                const notify = elem.nextElementSibling;
+                notify.textContent = `Empty ${id} is not allowed;`;
+            }
+            return !is_empty;
         };
-    }
-    //Set the ios of the login panel.
-    async show_panels() {
         //
-        //Retrieve as an array all the io elements of this page
-        const ios = Array.from(this.document.querySelectorAll('data-io'));
+        //2. Check if e-mail is empty, then flag it as an error if it is empty.
+        const email_is_valid = is_valid('email');
         //
-        //Use the elements to create the ios and set their default values
-        for (const element of ios) {
-            //
-            //Create the io. (It is saved it in the global collection of ios)
-            const Io = io.io.get_io(element);
-            //
-            //Get its default value -- if any; otherwise null
-            const value = 
-            //
-            //If the default is defined...
-            element.dataset.default !== undefined
-                //
-                //...then retirn it
-                ? element.dataset.default
-                //
-                //...otherwise retrn a null
-                : null;
-            //
-            //Set the ios's value
-            Io.value = value;
-        }
+        //3. Check if password is empty, then flag it as an error if it is 
+        //empty.
+        const password_is_valid = is_valid('password');
+        //
+        //Return true if both the email and password are valid 
+        return email_is_valid && password_is_valid;
     }
 }
 //
 //This class represents authentication service providers
-//e.g., google, facebook, github, outlook, etc
+// eg. google,facebook,github
 export class provider {
-    username;
-    password;
+    // 
+    //The request to the provider 
+    operation_id;
     //
-    constructor(username, password) {
-        this.username = username;
-        this.password = password;
+    //Every service provider is identified by this name
+    //e.g google,facebook.
+    name;
+    //
+    //Initialize the provider using the name. 
+    constructor(name, operation) {
+        this.name = name;
+        this.operation_id = operation;
     }
 }
-//This class represents the authentication services provided by google.
-//  class google extends provider{
-//    //
-//      constructor(public username:string, public password:string) {
-//          super(username, password);
-//      }
-//      //
-//This method allows users to signin using their google 
-//account;it is borrowed from firebase.
-//   async authenticate():Promise<user> {
-//       //Google Authentication.
-//       //Provider required
-//       var provider = new firebase.auth.GoogleAuthProvider();
-//       //
-//       //Google login with redirect.
-//       await firebase.auth().signInWithRedirect(provider);
-//       //
-//       //
-//       const uuid = await firebase.auth().getRedirectResult();
-//       //
-//       //Create an applicatioon user
-//       const User:user = new user(uuid.user!.name!);
-//       //
-//       //Extract the provider details that we require for our user 
-//       //identification
-//       User.first_name = uuid.user!.displayName,
-//       User.full_name = uuid.user!.displayName,
-//       User.picture = uuid.user!.photoURL;
-//       //Return the new user
-//       return User;
-//   }
-//  }
-////
+// This class represents the authentication services provided by google.
+class google {
+    constructor(operation) {
+        //super('google',operation);
+    }
+}
+//
 //Represents our custom login provided firebase
-export class outlook extends provider {
-    username;
-    password;
+class outlook extends provider {
     //
-    constructor(username, password) {
-        super(username, password);
-        this.username = username;
+    //
+    email;
+    password;
+    constructor(email, password, operation) {
+        super('outlook', operation);
+        this.email = email;
         this.password = password;
     }
     //
-    //This is our custom-made authentication (sign in) method using php hashing. 
-    async authenticate_user() {
+    //This is our custom made signing method using php hashing. 
+    async authenticate() {
         //
-        //Authenticate the user using the given name and password to get an 
-        //answer 
-        const ans = await server.exec("database", ["mutall_users"], "authenticate", [this.username, this.password]);
+        //Check whether the user is registering or loging in;
+        //if registering then create an account 
+        if (this.operation_id === "register") {
+            //
+            //Registration 
+            //
+            //Create the user account
+            await server.exec("database", ["mutall_users"], "register", [this.email, this.password]);
+        }
+        else {
+            //
+            //LOGIN
+            //Authenticate the user using the given email and password 
+            const ok = await server.exec("database", ["mutall_users"], "authenticate", [this.email, this.password]);
+            //
+            //If the login is not successful throw an exception
+            if (!ok)
+                throw new schema.mutall_error("Invalid login credentials");
+        }
         //
-        //If the answer is ok, return a valid user; otherwise return the error.
-        return (ans.result === 'ok') ? new user(this.username, ans.pk) : new Error(ans.msg);
-    }
-    //Register the user requested in this login page
-    async register_user() {
-        //
-        //Create the user account and return the user's primary key
-        const ans = await server.exec("database", ["mutall_users"], "register", [this.username, this.password]);
-        //
-        //If the result is ok, return a new user; otherise, retirn an error
-        return (ans.result === 'ok') ? new user(this.username, ans.pk) : new Error(ans.msg);
+        return new user(this.email);
     }
 }
 // 
 //Solomon was and lawrence have to develop this class
 //because facebook requires special setup.
-//  class facebook extends provider {
-//      // 
-//      constructor(public username:string, public password:string) {
-//          super(username, password);
-//      }
-//      //
-//This method allows users to signin using their google 
-//account;it is borrowed from firebase.
-//   async authenticate():Promise<user> {
-//     //Google Authentication.
-//     //Provider required
-//     var provider = new firebase.auth.FacebookAuthProvider();
-//     //
-//     //Google login with redirect.
-//     await firebase.auth().signInWithRedirect(provider);
-//     //
-//     //
-//     const uuid = await firebase.auth().getRedirectResult();
-//     uuid.user!.name 
-//     //
-//     //Create an applicatioon user
-//     const User:user = new user(uuid.user!.name);
-//     //
-//     //Extract the provider details that we require for our user 
-//     //identification
-//     User.first_name = uuid.additionalUserInfo!.username;
-//     User.full_name = uuid.user!.displayName,
-//     User.picture = uuid.user!.photoURL;
-//     //Return the new user
-//     return User;
-// }
-//  }
-//  
+class facebook {
+    // 
+    // 
+    constructor(operation) {
+        // 
+        // 
+        //super('facebook',operation);
+    }
+}

@@ -2,6 +2,9 @@ import * as outlook from "./outlook.js";
 //
 //Allows methods on this page to talk to the server
 import * as server from "../../../schema/v/code/server.js";
+// 
+//This is the problem we have of solving that.
+import * as library from "../../../schema/v/code/library.js";
 //
 //Resolve the schema classes, viz., database, columns, mutall e.t.c. 
 import * as schema from "../../../schema/v/code/schema.js";
@@ -10,10 +13,6 @@ import * as schema from "../../../schema/v/code/schema.js";
 import * as io from "../../../schema/v/code/io.js";
 //
 import * as app from './app.js';
-
-//
-//Resolve the schema classes, viz., database, columns, mutall e.t.c. 
-import * as lib from "../../../schema/v/code/library";
 
 //
 //This interface helps us to control the data we retrieve from the server
@@ -75,11 +74,11 @@ type offset = number;
 export type crud_selection = {
     //
     //The td position where the original primary key came from. 
-    position: lib.position,
+    position: library.position,
     //
     //The primary key auto number represented as a string
     //because we are mostly using it as such. It may be missing for a new record  
-    pk? : lib.pk,
+    pk? : library.pk,
 }
 // 
 //A theme view boundary has two extremes, the top and the bottom 
@@ -124,7 +123,7 @@ export class theme extends outlook.panel {
     sql?: string
     // 
     //2...The column names involved in the above named sql
-    col_names?: Array<schema.cname>;
+    col_names?: Array<library.cname>;
     // 
     //3...The maximum possible records that are available to paint
     //the content pannel. they are required in adjusting the boundaries
@@ -155,7 +154,7 @@ export class theme extends outlook.panel {
     //
     //The database and entity name that is displayed in this 
     //theme panel.
-    public subject: schema.subject;
+    public subject: outlook.subject;
     //
     //Track the original sql for supporting the review service.
     public original_sql: string | null = null;
@@ -169,8 +168,8 @@ export class theme extends outlook.panel {
     constructor(
         //
         //The database and entity name that is displayed in this 
-        //theme panel. If null, we take the subject of the current application
-        subject: schema.subject|null,
+        //theme panel. If null, we take the subject of the curreny application
+        subject: outlook.subject|null,
         // 
         //The css for retrieving the html element where to display 
         //the theme's subject record.
@@ -184,9 +183,7 @@ export class theme extends outlook.panel {
         
     ) {
         super(css, base);
-        //
-        //Set the subject (if it is null) to that of the application,
-        this.subject = subject === null ? app.app.current.subject : subject;
+        this.subject = subject === null ? app.app.current.subject:subject;
     }
     //
     //Paint this theme panel with editable records of the current application's
@@ -205,7 +202,7 @@ export class theme extends outlook.panel {
             //
             //Constructor args of an editor class are ename and dbname 
             //packed into a subject array in that order.
-            [this.subject.ename, this.subject.dbname],
+            this.subject,
             //
             //Method called to retrieve editor metadata on the editor class.
             "describe",
@@ -479,7 +476,7 @@ export class theme extends outlook.panel {
         const constrained_limit = h < app.app.current.config.limit ? h : app.app.current.config.limit;
         //
         //Query the database 
-        const result: Array<schema.fuel> = await this.query(offset, constrained_limit);
+        const result: library.Ifuel = await this.query(offset, constrained_limit);
         //
         //   
         //Display the results on the table`s body.
@@ -631,11 +628,11 @@ export class theme extends outlook.panel {
     //
     //
     //Fetch the real data from the database as an array of table rows.
-    private async query(offset: offset, limit: number): Promise<Array<schema.fuel>>{
+    private async query(offset: offset, limit: number): Promise<library.Ifuel>{
         // 
         //The entity name that drives this query comes from the subject of this 
         //application
-        const ename = `\`${this.subject.ename}\``;
+        const ename = `\`${this.subject[0]}\``;
         //
         //Complete the sql using the offset and the limit.
         const complete_sql =
@@ -648,7 +645,7 @@ export class theme extends outlook.panel {
             "database",
             //
             //dbase class constructor arguments
-            [this.subject.dbname],
+            [this.subject[1]],
             //
             "get_sql_data",
             //
@@ -667,13 +664,13 @@ export class theme extends outlook.panel {
         //
         //The row of data to load to the tr. There may be none for newly
         //created rows
-        row?: {[index:string]:schema.basic_value}
+        row?: {[index:string]:library.basic_value}
     ):void {
         //
         //Convert the row object into key-value pairs where the
         //key is the column name. Take care of those cases where row 
         //is undefined, e.g., new rows.
-        const pairs: Array<[string, schema.basic_value]> = row === undefined
+        const pairs: Array<[string, library.basic_value]> = row === undefined
             ? this.col_names!.map(cname => [cname, null])
             : Object.entries(row);
         //
@@ -689,7 +686,7 @@ export class theme extends outlook.panel {
         else{
             //Get the primary key column; It is indexed using this theme's
             // subject name.
-            const column = <string>row[this.subject.ename];
+            const column = <string>row[this.subject[0]];
             //
             //The primary key column is a tupple of two values: the autonumber 
             //and the friendly components packed as a single string.
@@ -749,7 +746,7 @@ export class theme extends outlook.panel {
         //
         //Destructure the subject to get the entity name; its the 
         //first component. 
-        const ename = this.subject.ename;
+        const[ename] = this.subject;
         // 
         //Get the column name that matches this td. 
         const col_name = this.col_names![cellIndex];
@@ -760,16 +757,15 @@ export class theme extends outlook.panel {
         //Get the anchor for the io
         const anchor: io.anchor = {element: td, page: this.base};
         //
-        //Create and return the io for this column when we dont know
-        //its io type.
-        const Io = io.io.create_io(anchor, undefined, col);
+        //Create and return the io for this column.
+        const Io = io.io.create_io(anchor, col);
         // 
         return Io;
     }
     
     //Select the row whose primary key is the given one.
     //and make sure that it is brought into the view 
-    protected select_nth_row(pk?: lib.pk) {
+    protected select_nth_row(pk?: library.pk) {
         // 
         //Row selection is valid only when the pk is set
         if (pk === undefined) return;

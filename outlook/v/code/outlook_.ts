@@ -1,33 +1,434 @@
-import * as lib from "../../../schema/v/code/library";
-
-//Resolve the reference to the server
-import * as server from "../../../schema/v/code/server.js";
-
-import {view, page, panel} from "./view.js";
-
+//
+import * as library from "../../../schema/v/code/library.js";
+//
 //Resolve the schema classes, viz.:database, columns, mutall e.t.c. 
 import * as schema from "../../../schema/v/code/schema.js";
-
-//re-export the view modules
-export {view, page, panel} from "./view.js";
-
-
-
-//Working with dates made easier by the Luxon library. Condider using Webpark to
-//solve the javsacript failure to recognise the node_modules
-//import * as luxon from "luxon";
-
 //
-//A quiz extends a page in that it is used for obtaining data from a user. The
-//class parameter tells us about the type of data to be collected. Baby and popup 
-//pages are extensions of a quiz.
+//These are the components of the subject.
+//The ename and dbname are defined in the library.d.ts,
+//so we dont need to re-define them here.
+export type subject = [library.ename, library.dbname];
+
+//A view is the home of all methods that need to be accessible from
+//the fron end. 
+export class view {
+    // 
+    //This is used for indexing a view object to support implementation of the 
+    //static 'current' property, as well as associateing this view with a state
+    //object in the management of sessions. It is set when this view is 
+    //constructed. See onpopstate 
+    public key: number;
+    // 
+    //Lookup storage for all views created by this application.
+    static lookup: Map<number, view> = new Map();
+    // 
+    //The current active view where the events (on a html page) are wired. E.g.
+    //<button onclick=view.current.open_dbase()>Ok</button>
+    static current: view;
+    //
+    //A view is associated with a win property. Typically it is the current
+    //window, when the view is created. This variable is protected so that
+    //it accessible only via getters and setters. This is important because
+    //other derivatives of this class access the window property in different
+    //ways. For instance, a baby page gets its window from its mother
+    protected win__: Window = window
+    // 
+    //These are getter and setter to access the protected win variable. See 
+    //documention for propertu win__ above to appreciate the reason for using 
+    //of getters and setters in derived classes   
+    get win() { return this.win__; }
+    set win(win: Window) { this.win__ = win; }
+    //
+    //The document of a view is that of its the window
+    get document() {
+        return this.win.document;
+    }
+    //
+    //Friendly id of a view, for debugging purposes.
+    public id = 'view';
+    //
+    //The children nodes of the root document element of this page
+    //to support restoring of this page in response to the on pop state event.
+    //The ordinary programmer is not expected to interact with this property, 
+    //so it is protected
+    protected child_nodes: Array<ChildNode> = [];
+    
+    //
+    constructor(
+        //
+        //The address  of the page. Some popup pages don`t have 
+        //a url that`s why it`s optional.
+        public url?: string
+    ) {
+        // 
+        //Register this view identified by the last entry in the lookup table for views.
+        // 
+        //The view's key is the count of the number of keys in the lookup.
+        this.key = view.lookup.size;
+        view.lookup.set(this.key, this);
+   }
+
+   
+    //Returns the values of the currently selected inputs 
+    //from a list of named ones 
+    public get_input_choices(name: string): Array<string> {
+        //
+        //Collect the named radio/checked inputs
+        const radios = Array.from(this.document.querySelectorAll(`input[name="${name}"]:checked`));
+        //
+        //Map teh selected inputs to thiier values and return the collection
+        return radios.map(r => (<HTMLInputElement>r).value);
+    }
+    
+    //Returns the value from an input element
+    public get_input_value(id:string):string{
+        //
+        //get teh identified element
+        const elem = this.get_element(id);
+        //
+        //It must be an input  element
+        if (!(elem instanceof HTMLInputElement)) 
+            throw new schema.mutall_error(`'{$id}' is not an input element`);
+        //
+        return elem.value;
+    } 
+
+    //Create a new element from  the given tagname and attributes 
+    //we assume that the element has no children in this version.
+    public create_element<
+        //
+        //The tagname is the string index of the html map.
+        tagname extends keyof HTMLElementTagNameMap,
+        // 
+        //Collection of attributed values. The typescript Partial  data type
+        //is a short form of
+        //attribute_collection extends {[key in attribute_name]?:HTMLElementTagNameMap[tagname][key]}
+        attribute_collection extends Partial<HTMLElementTagNameMap[tagname]>
+    >(
+        //
+        //The element's tag name
+        tagname: tagname,
+        //
+        //The parent of the element to be created.
+        anchor?: HTMLElement,
+        //
+        //The attributes of the element
+        attributes?: attribute_collection
+    ): HTMLElementTagNameMap[tagname] {
+        //
+        //Create the element holder based on the td's owner document
+        const element = this.document.createElement(tagname);
+        //
+        //Attach this element to the anchor, if the anchor is defined 
+        if (anchor!==undefined) anchor.appendChild(element);
+        //
+        //Loop through all the keys to add the atributes, if they are defoned
+        if (attributes!==undefined)
+        for (let key in attributes) {
+            const value: any = attributes[key];
+            // 
+            // JSX does not allow class as a valid name
+            if (key === "className") {
+                // 
+                //Take care of multiple class values
+                const classes = (<string>value).split(" ");
+                classes.forEach(c => element.classList.add(c));
+            }
+            else if (key === "textContent") {
+                element.textContent = value;
+            }
+            else if (key.startsWith("on") && typeof attributes[key] === "function") {
+                element.addEventListener(key.substring(2), value);
+            }
+            else {
+                // <input disable />      { disable: true }
+                if (typeof value === "boolean" && value) {
+                    element.setAttribute(key, "");
+                } else {
+                    //
+                    // <input type="text" />  { type: "text"}
+                    element.setAttribute(key, value);
+                }
+            }
+        }
+        //
+        //Rteurn the element
+        return element;
+    }
+    //
+    //Return the identified element 
+    get_element(id: string): HTMLElement {
+        //
+        //Get the identified element from the current browser context.
+        const element: HTMLElement | null =
+            this.document!.querySelector(`#${id}`);
+        //
+        //Check the element for a null value
+        if (element === null) {
+            const msg = `The element identified by #${id} not found`;
+            alert(msg);
+            throw new Error(msg);
+        }
+        return element;
+    }
+    
+
+    //Show or hide the identified a window panel. This method is typeically 
+    //used for showing/hiding a named grou of elements that must be shown
+    //or hidden as required
+    public show_panel(id: string, show: boolean): void {
+        //
+        //Get the identified element
+        const elem = this.get_element(id);
+        //
+        //Hide the element if the show is not true
+        elem.hidden = !show;
+    }
+    
+    
+}
+
+//A page is a view with panels. It can be opend
+export class page extends view{
+    //
+    //A page has named panels that the user must ensure that they 
+    //are set before are shown.
+    protected panels: Map<string, panel>;
+    
+    //
+    constructor(url?: string){
+        super(url); 
+        // 
+        //Initialize the panels dictionary
+        this.panels = new Map();
+    }
+    
+    //
+    //The user must call this method on a new application object; its main 
+    //purpose is to complete those operations of a constructor that require
+    //to function synchronously
+    async initialize(): Promise<void>{
+        //
+        //Set the window for this page
+        this.win = await this.open();
+        //
+        //Add the pop state listener to ensure that if a history back button
+        //is clicked on, we can restore this page
+        this.win.onpopstate = (evt) => this.onpopstate(evt);
+    }
+    //Handle the on pop state listener by saving the current state and 
+    //restoring the view matching the event's history state
+    protected onpopstate(evt: PopStateEvent) {
+        // 
+        //Ignore any state that has no components to restore. Typically
+        //this is the initial state placed automatically on the history 
+        //stack when this application loaded initially. For this version, the
+        //null state is never expected because we did replace it in this 
+        //application's initializetion
+        if (evt.state === null) 
+            throw new schema.mutall_error("Null state unexpected");
+        // 
+        //Get the saved view's key
+        const key = <number>evt.state;
+        // 
+        //Use the key to get the view being restored. We assume that it must be 
+        //a baby of the same type as this one
+        const new_view =<page> view.lookup.get(key);
+        //
+        //It is an error if the key has no matching view.
+        if (new_view === undefined) 
+            throw new schema.mutall_error(`This key ${key} has no view`);
+        // 
+        //Restore the components of the new view
+        new_view.restore_view(key);
+    }
+    
+    // 
+    //The default way a quiz view shows its content is 
+    //by looping through all its panels and painting 
+    //them. A quiz view without panels can override this method 
+    //to paint their contents.
+    public async show_panels(): Promise<void> {
+        //
+        //The for loop is used so that the panels can throw 
+        //exception and stop when this happens  
+        for (const panel of this.panels.values()) {
+            await panel.paint();
+        }
+    }
+    
+    
+    
+    //Restore the children nodes of this view by re-attaching them to the 
+    //document element of this page's window.  
+    public restore_view(key: number): void {
+        //
+        //Get the view of the given key
+        const View = view.lookup.get(key);
+        //
+        //It's an error if the view has not been cached
+        if (View === undefined) 
+            throw new schema.mutall_error(`This key ${key} has no matching view`);
+        //
+        //Get the root document element. 
+        const root = View.document.documentElement;
+        //
+        //Clean the root before restoring it -- just in case the view
+        //is attached to an old window;
+        Array.from(root.childNodes).forEach(node => root.removeChild(node));
+        //
+        //Attach every child node of this view to the root document
+        this.child_nodes.forEach(node => root.appendChild(node));
+    }
+    
+    
+    //Opening a page makes visible in the users view. All pages return the 
+    //current window. Only popups create new ones.
+    async open(): Promise<Window>{
+        return window; 
+    }
+    
+    //Remove a quiz page from a users view and wait for the base to rebuild. 
+    //In popups we simply close the window; in babies we do a history back, 
+    //and wait for the mother to be reinstated. In general, this does 
+    //nothing
+    async close():Promise<void>{}
+    
+    //Save the children of the root document element of this view to the history
+    //stack using the 'how' method
+    public save_view(how: "pushState" | "replaceState"): void {
+        //
+        //Get the root document element
+        const root = this.document.documentElement;
+        //
+        //Save the child nodes to a local property
+        this.child_nodes = Array.from(root.childNodes);
+        //
+        //Save (by either pushing or replacing) this view's state to the 
+        //windows session history indirectly -- indirectly because we don't 
+        //acutally save this view to the session history but its unique 
+        //identification key -- which then is used for looking up the view's
+        //details from the static map, view.lookup
+        this.win.history[how](
+            //
+            //The state object pushed (or replaced) is simply the key that 
+            //identifies this view in the static look for views, view.lookup
+            this.key,
+            //
+            //The title of this state. The documentation does not tell us what
+            //it is really used for. Set it to empty 
+            "",
+            //
+            //This browser bar info is not very helpful, so discard it
+            ""
+        );
+    }
+    
+    
+    //Show the given message in a report panel
+    async report(error:boolean, msg: string){
+        //
+        //Get the report node element
+        const report = this.get_element('report');
+        //
+        //Add the error message
+        report.textContent = msg;
+        //
+        //Style the report, depending on the error status
+        if (error) {
+            report.classList.add('error');
+            report.classList.remove('ok');
+        } 
+        else {
+            report.classList.add('ok');
+            report.classList.remove('error');
+        }
+        //
+        //Hide the go button
+        const go = this.get_element('go');
+        go.hidden = true;        
+        //
+        //Change the value of the cancel button to finish
+        const cancel = this.get_element('cancel');
+        cancel.textContent = 'Finish';             
+        //
+        //Wait for the user to close the merge operation
+        await new Promise(
+            (resolve)=>cancel.onclick = ()=>{
+                this.close();
+                resolve(null);
+            }
+        );
+    }
+    
+    
+}
+
+//A panel is a targeted setction of a view. It can be painted 
+//independently
+export abstract class panel extends view {
+    //
+    //The panels target element is set (from css in the constructor arguments)
+    // when the panel is painted
+    public target?: HTMLElement;
+    //
+    constructor(
+        //
+        //The CSS to describe the targeted element on the base page
+        public css: string,
+        //
+        //The base view on that is the home of the panel
+        public base: view
+    ) {
+        //The ur is that of the base
+        super(base.url);
+    }
+    //
+    //Start painting the panel
+    async paint(): Promise<void> {
+        //
+        //Get the targeted element. It must be only one
+        const targets = Array.from(
+            this.document.querySelectorAll(this.css));
+        //
+        //There must be a target    
+        if (targets.length == 0) throw new schema.mutall_error(
+            `No target found with CSS ${this.css}`);
+        //
+        //Multiple targets is a sign of an error
+        if (targets.length > 1) throw new schema.mutall_error(
+            `Multiple targets found with CSS ${this.css}`);
+        //
+        //The target must be a html element
+        if (!(targets[0] instanceof HTMLElement)) throw new schema.mutall_error(`
+        The element targeted by CSS ${this.css} must be an html element`)
+        //
+        //Set the html element and continue painting the panel
+        this.target = targets[0];
+        //
+        //Continue to paint the pannel. This method is implemented differently
+        //depending the obe extending class    
+        await this.continue_paint();
+    }
+    //
+    //Continue painting the this pannel -- depending on its nature. 
+    public abstract continue_paint(): Promise<void>;
+    //
+    //The window of a panel is the same as that of its base view, 
+    //so a panel does not need to be opened
+    get win() {
+        return this.base.win;
+    }
+}
+//
+//A quiz extends a view in that it is used for obtaining data from a user. The
+//parameter tells us about the type of data to be collected. Baby and popup 
+//pages are extensions of a view.
 export abstract class quiz<o> extends page{
     // 
     //These are the results collected by this quiz. 
     public result?: o;
-    //
-    //NB. The URL of a page is optional; if not defines, then a page is 
-    //constructed from scratch.... 
+    
     constructor(public url?: string) { 
         super(); 
     }
@@ -109,11 +510,10 @@ export abstract class quiz<o> extends page{
     
     //Returns a result of the requested type
     abstract get_result(): Promise<o>;
-    
 }
 //
 //The baby class models pages that share the same window as their mother.
-//In contrast a popup does not(share the same window with the mother)
+//In contrast a popup does not(share the same window as the mother)
 export abstract class baby<o> extends quiz<o>{
     //
     constructor(public mother?:page, url?: url) {
@@ -167,51 +567,7 @@ export abstract class baby<o> extends quiz<o>{
         })
         
     }
-    //
-	//Fills the indentified selector element with options fetched from the given
-	//table name in the given database
-	async fill_selector(ename: string, dbname: string, selectorid: string) {
-		//
-		//1. Get the selector options from the database
-		//
-		//
-		//1.1 Get the options of the first and second column names
-		const options: Array<schema.fuel> = await server.exec(
-			"selector",
-			[ename, dbname],
-			"execute",
-			[]
-		);
-		//
-		//2. Fill the selector with the options
-		//
-		//2.1. Get the selector element
-		const selector = document.getElementById(selectorid);
-		//
-		//2.2. Check if the selector is valid
-		if (!(selector instanceof HTMLSelectElement))
-			throw new Error(`The element identified by ${selectorid} is not valid`);
-		//
-		//2.3 Go through the options and populate the selector with the option elements
-		for (let option of options) {
-			//
-			//2.3.1. Get the primary key from the option
-			//
-			//Formulate the name of the primary key.
-			const key = `${ename}_selector`;
-			//
-			const pk = option[key];
-			//
-			//2.3.2. Get the friendly component from the option
-			const friend = option.friend__;
-			//
-            //
-			this.create_element( "option", selector, {
-				value: `${pk}`,
-				textContent: `${friend}`
-			});
-		}
-	}
+
 }
 
 //A template is a popup window used for canibalising to feed another window.
@@ -224,7 +580,7 @@ export class template extends view {
         super(url)
     }
 
-    //Opening a window, by default, returns the current window and sets the
+    //Open a window, by default, reurns the current window and sets the
     //title
     public async open(): Promise<void> {
         //
@@ -350,7 +706,7 @@ export namespace assets {
     export type listener =
         // 
         //...call to the inbuilt crud function...
-        ["crud", ename, Array<verb>, xor, lib.dbname?]
+        ["crud", ename, Array<verb>, xor, library.dbname?]
         // 
         //...or a user defined function implemented directly in this code...
         | ["event", (...n: any) => void]
@@ -387,7 +743,7 @@ export namespace assets {
         is_subscribed?: boolean,
         //
         //Indicated if this is a globally accessible product or not. A product
-        //is global if it is not associated with any application via the 
+        //is global if t is not associated with any application via the 
         //execution path.
         is_global: 'yes' | 'no',
         //
@@ -426,18 +782,18 @@ export type option<i> = { name: string, value:i}
 //
 //This is a generalised popup for making selections from multiple choices  
 //The choices are provided as a list of key/value pairs and the output is 
-//a either a single choice or a list of them.  
+//a either a single choice or a list.  
 export class choices<
     //
     //Let 'i' be the user defined type of element of the array making up the 
     //input choices
     i,
     //
-    //Let 'a' be the type of desired output constrained, i.e., single or multiple
+    //Let 'a' be the type of desired output constrained, i.e., singleor multiple
     a extends 'single'|'multiple',
     //
     //Let 'r' be the data being returned by this popup. Its either a singe i or 
-    //its array depending on the 'a' parameter
+    //its array depending on the 'a'
     r extends (a extends 'single' ? i: a extends 'multiple' ? Array<i>: never)
 > extends popup<r>  {
     //
@@ -502,7 +858,7 @@ export class choices<
                 this.result = <r|undefined>indices.map(index=>this.options[+index].value);
            break;
            default:
-                throw new schema.mutall_error(`Unknown type ${this.type}`); 
+                throw new schema.mutall_error('Unkonen type ${this.type}'); 
                
         }
         //
@@ -602,3 +958,44 @@ export class report extends baby<void>{
         this.get_element("go").hidden = true;
     }
 }
+
+//Represents a person/individual that is providing
+//or consuming a services we are developing. 
+export class user {
+    // 
+    //The provider supplied data 
+    public email: string | null;
+    // 
+    //The type of this user.
+    //A user is a visitor if he has never been registered before
+    //otherwise regular. This property is set on app.login
+    public type?: "regular" | "visitor";
+    //
+    //Optional provider supplied data
+    public first_name?: string | null;
+    public full_name?: string | null;
+    public picture?: string | null;
+    //
+    //These are the roles that this user plays in the application that he`s
+    //logged in.
+    public role_ids?: Array<string>;
+    // 
+    //The products that this user is assigned to.
+    public products?: Array<assets.uproduct>
+    //
+    //The minimum requirement for authentication is a username and 
+    //password
+    constructor(email: string | null = null) {
+        //
+        this.email = email;
+    }
+
+    //A user is a visitor if the email is not defined
+    //otherwise his a regular user.
+    is_visitor(): boolean {
+        if (this.email === undefined) return true;
+        else return false;
+    }
+
+}
+

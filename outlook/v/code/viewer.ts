@@ -5,7 +5,7 @@ import * as outlook from "./outlook.js"
 import * as schema from "../../../schema/v/code/schema.js" 
 
 /*
- * The viewer class supports disply of html pages during the design phase
+ * The viewer class supports disply of html pages during the design phase 
  */
  export class viewer extends outlook.baby<void>{
      //

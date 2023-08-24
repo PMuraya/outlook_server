@@ -207,13 +207,10 @@ export class template extends view {
         //page for us. The window is temporary 
         const win = window.open(this.url);
         //
-        //Divert attention from the window, in an attempt to crontrol the flashing
-        //win.blur doe does not work; consider using DOM to pen the html
-        //
         //Wait for the page to load 
-        await new Promise(resolve => win.onload = () => resolve(true));
+        await new Promise(resolve => win.onload = resolve);
         //
-        //Set the win property for this page
+        //Retrieve the root html of the new documet
         this.win = win;
     }
     //
@@ -222,10 +219,10 @@ export class template extends view {
     copy(src, dest) {
         //
         //Destructure the destination specification
-        const [View, dest_id] = dest;
+        const [Page, dest_id] = dest;
         //
         //1 Get the destination element.
-        const dest_element = View.get_element(dest_id);
+        const dest_element = Page.get_element(dest_id);
         //
         //2 Get the source element.
         const src_element = this.get_element(src);
@@ -237,22 +234,15 @@ export class template extends view {
         //Return the destination painter for chaining
         return dest_element;
     }
-    //Close the template after copying
-    close() {
-        this.win.close();
-    }
 }
 //This class represents the view|popup page that the user sees for collecting
 //inputs
 export class popup extends quiz {
     specs;
     //
-    constructor(
-    //
-    //Url to a HTML file that has the content for pasting into the popup
-    url, 
+    constructor(url, 
     // 
-    //The popoup window size and location specifications.
+    //The popoup window size and location specification.
     specs) {
         super(url);
         this.specs = specs;

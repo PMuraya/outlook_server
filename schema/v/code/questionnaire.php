@@ -660,7 +660,7 @@ class questionnaire extends schema {
             //
             //Get the table's class name; it must exist
             if (!isset($Itable->class_name)) {
-                $errors[] = new myerror("Class name not found for table " . json_encode($Itable));
+                $errors[] = new myerror("Class name not found for table " . json_decode($Itable));
                 //
                 return;
             }
@@ -1252,11 +1252,11 @@ namespace mutall\capture;
         //that our OO model comprising of a database-entity-column-artefact needs
         //revision. For instance, capture/artefact does not extend a /table as 
         //one would expect. Instead, capture/artefact has a /table source. 
-        //Likewise, capture/column does not extend /column; the latter is a 
+        //Likewise, capture/column doe not extend /column; the latter is a 
         //source in the former.
         function write(/* row|null */$row): ans {
             //
-            //Do the writing, according to the source column.
+            //Do the write, according to the source column.
             $exp = match(true){
                 //
                 //Write an attribute involves simplifying its input/capture 
@@ -1300,17 +1300,10 @@ namespace mutall\capture;
             //Ensure that the attribute's size for identifiers
             //is less or equal to the size of the column. 
             if (
-                isset($this->exp) 
-                && $this->exp instanceof scalar 
-                && $this->source->data_type === "varchar" 
-                && $this->source->is_id() //????
-                && ($size = strlen(strval($this->exp->simplify()))) > $this->source->length
-            ){
-                $exp = new \mutall\myerror(
-                    "The size of column " 
-                    . $this->source->full_name()
-                    . "is $size which is larger than " 
-                    . $this->source->length);
+                    isset($this->exp) && $this->exp instanceof scalar && $this->source->data_type === "varchar" && $this->source->is_id() && ($size = strlen(strval($this->exp->simplify()))) > $this->source->length
+            ) {
+                $exp = new \myerror("The size of column " . $this->source->full_name()
+                        . "is $size which is larger than " . $this->source->length);
             }
             //
             //If the expression is set, simplify it
@@ -1319,16 +1312,11 @@ namespace mutall\capture;
             }
             //
             //The attribute's value not set; try the default.
-            elseif(
-                $this->source->default !== 'NULL' 
-                && !is_null($this->source->default)
-            ) {
+            elseif ($this->source->default !== 'NULL' & !is_null($this->source->default)) {
                 //
                 //Parse the default value to get an expression.
                 $exp = $this->parse_default($this->source->default);
-            }else {
-                //
-                //The attribute value is missing
+            } else {
                 //
                 //Get this column's entity name
                 $ename = $this->entity->name;
@@ -1595,8 +1583,9 @@ namespace mutall\capture;
         //The fuel table header
         public array/* = Map<cname, dposition> */ $header;
         //
-        //Generates a row of basic values, as an 1-d array
-        abstract function read(): \Generator/*<array<basic_value>*/;
+        //Return a row of data as an 1-d array, or false if at the end of the 
+        //stream
+        abstract function read(): \Generator/* array<basic_value>|false */;
         //
         //The current row Index of the table's body defaults to 0
         public int $row_index=0;
@@ -1882,7 +1871,7 @@ namespace mutall\capture;
 
     }
 
-    //Modelling a text file that is line terminated by carriage returns
+//Modelling a text file that is line terminated by carriage returns
     class csv extends table {
 
         //
@@ -2048,7 +2037,7 @@ namespace mutall\capture;
             //
             //Initialize the PDO property. The server login credentials are maintained
             //in a config file.
-            $this->pdo = new \PDO($dbname, \config::username, \config::password);
+            $this->pdo = new \PDO($dbname, \mutall\config::username, \mutall\config::password);
             //
             //Throw exceptions on database errors, rather thn returning
             //false on querying the dabase -- which can be tedious to handle for the 
@@ -2098,6 +2087,7 @@ namespace mutall\capture;
      * This class supports processing of whatsapp messages.
      */
     class whatsapp extends table {
+
         //
         //This pattern should match user generated messages only
         const PATTERN_USER = "/^(\d*)\/(\d*)\/(\d*),\s(\d*):(\d*)\s([P|A]M)\s-\s([^:]*):/";
@@ -2107,8 +2097,9 @@ namespace mutall\capture;
         //
         //This pattern should match all messages
         const PATTERN_ALL = "/^(\d*)\/(\d*)\/(\d*),\s(\d*):(\d*)\s([P|A]M)\s-\s/";
+
         //
-        //The sourece of the whatsapp messages
+        //The source of the whatsapp messages
         public string $filename;
 
         function __construct(string $tname, string $filename, int $body_start = 0) {
@@ -2148,7 +2139,6 @@ namespace mutall\capture;
                     //    
                     //Isolate the system generated messages
                     if (preg_match(self::PATTERN_USER, $line, $matches)) {
-                        //
                         //This is a user generated message
                         //
                         //Start a new message.
@@ -2216,14 +2206,13 @@ namespace mutall\capture;
         private function output_message(&$msg): \Generator {
             //
             //Do nothing if there is no initial message
-            if (!is_null($msg)) {
-                //
-                //Output (echo) the requested row
-                yield [$msg['sender'], $msg['date'], $msg['body']];
-                //
-                //Reset the mesage
-                $msg = null;
-            }
+            if (is_null($msg)) return;
+            //
+            //Output (echo) the requested row
+            yield [$msg['sender'], $msg['date'], $msg['body']];
+            //
+            //Reset the mesage
+            $msg = null;
         }
         
         //
@@ -2234,7 +2223,7 @@ namespace mutall\capture;
         }
 
     }
-    
+
     //This class supports scanning the disk for files
 class scandisk extends table{
     //

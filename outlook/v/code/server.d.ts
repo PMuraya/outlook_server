@@ -117,11 +117,11 @@ declare namespace php_fn{
     }
     /**  */
      class user {
-        constructor(name: string);
+        constructor(email: string);
         //
         //Returns the roles, as saved in a database, played by 
         //the logged in user
-        static get_roles(name: string, app_id: string): Array<string>;
+        static get_roles(email: string, app_id: string): Array<string>;
         //
         //Exports the given milk (data) to  database and rturns a html text
         //of result e.g

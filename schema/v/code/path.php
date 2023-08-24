@@ -23,8 +23,8 @@ class path{
             throw new \Exception("Folder or file  '$this->name' does not exist");
     }
     
-    //Scan files in folder in the current directory.
-    function scandir():Array/*<{path:path, name:string, is_file:boolean, properties:properties}>*/{
+    //Scan files in folder in the current directory
+    function scandir():Array/*<{relative:path, name:string, is_file:boolean}>*/{
         //
         //Get the filename being scanned
         //
@@ -33,8 +33,8 @@ class path{
         $scan_indexed = array_diff(scandir($this->name), ['..', '.']);
         //
         //The array dif seems to return an indxed array -- which gets mapped to
-        //another indexed array. Such an array resurfaces as a json object, 
-        //rather than an array -- with unintended consequences. Hakikisha that
+        //another insexed array. Sucj an array resufrfaces as a json object, 
+        //rather than an array -- with unintended consequences. Hakikisha tha
         //only array valuse are considederd
         $scan = array_values($scan_indexed); 
         //
@@ -92,7 +92,9 @@ class path{
     //
     //Compile and return the properties. 
     return ['name'=>$name, 'size'=>$size, 'create_date'=>$create_date, 'modify_date'=>$modify_date];
-}   
+}
+    
+    
     //Returns the complete name of this path by joining trh 2 given parts
     //ensuring that slashes are applied correctly
     function join_paths(string $path1, string $path2):string{

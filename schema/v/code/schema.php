@@ -3,17 +3,6 @@ namespace mutall;
 //
 require_once 'config.php';
 //
-//Include questionnaire to see if this addresses the following problem
-//Fatal error: 
-//  Could not check compatibility between 
-//      mutall\capture\artefact::pk(): mutall\capture\column 
-//  and mutall\entity::pk(): mutall\column, 
-//  because class mutall\capture\column is not available 
-//in questionnaire.php on line 796
-//
-//This did not solve the problem, so I commemneted it out
-//require_once 'questionnaire.php';
-//
 //The super class that supports the common methods for all the classes 
 //in a mutall project. 
 class mutall {
@@ -670,40 +659,27 @@ class database extends schema {
     
     // 
     //Use this database to test if a user with the given credentials is 
-    //found in the user database or not. It returns an array
-    //which when json encoded and decoded behaves like an stdclass of
-    //the shape: {result:'ok', pk:number} | {result:'error', msg:string}
-    public function authenticate(string $name, string $password):array{
+    //found in the user database or not.
+    public function authenticate(string $name, string $password):bool{
         // 
         //Create an sql/view to retrieve the password from  user table. 
         //the user with the given name 
-        $sql = "
-            select 
-                password, 
-                user 
-            from 
-                user 
-            where 
-                name= '$name' ";
+        $sql = "select password "
+                . "from user "
+                . "where name= '$name' ";
         //
         //Execute the query and retrieve the password
         $users= $this->get_sql_data($sql);
         // 
-        // Test if there is any user that matches the name if not report so
-        if(count($users)===0){return ['result'=>'error', 'msg'=>'Please sign up first, to access services'];}
+        // Test if there is any user that matches the name if not we return
+        //false 
+        if(count($users)===0){return false;}
         // 
         //If there is more than one  user we throw an exception
         if(count($users)>1){throw new myerror("More than one name found. "
                 . "Check your data model");}
-        //
         //If the user exists verify the password.
-        $ok = password_verify($password, $users[0]["password"]);
-        //
-        //If the autentication exists, return {result:'ok', pk:number}
-        if ($ok)return ['result'=>'ok', 'pk'=>$users[0]["user"]];
-        //
-        //Otherwise return {result:'error', msg:string}
-        else return ['result'=>'error', 'msg'=>'Sign in failed because of wrong credentials'];         
+        return password_verify($password, $users[0]["password"]);
     }
                 
     //Create a new account for the given user from first principles 
@@ -714,12 +690,10 @@ class database extends schema {
         // 
         //Create an sql/view to retrieve the password from  user table. 
         //the user with the given name 
-        $sql = "
-            select 
-                user,
-                password 
-            from 
-                user 
+        $sql = "select 
+                user.user
+                user.password 
+            from user 
             where name= '$name'";
         //
         //Execute the query and retrieve the password
@@ -751,10 +725,10 @@ class database extends schema {
                     . ")\n";
             //
             //Execute the insert query
-            $this->query($sql);
+            $stmt = $this->query($sql);
             //
             //Stop any further execution, returning success the last insert id
-            return ['result'=>'ok', 'pk'=>$this->pdo->lastInsertId()];
+            return ['type'=>'ok', 'pk'=>$stmt->lastInsertId()];
         }
         //
         //This user exists 
@@ -778,7 +752,7 @@ class database extends schema {
             //execute
             $this->query($stmt);
             //
-            //Stop any futher execution, returning ok with the selected primary key 
+            //stop any futher excecution, returning ok with the se;ected primary key 
             return ['result'=>'ok', 'pk'=>$users[0]['user']];
         }
         //
@@ -2388,8 +2362,8 @@ class view extends entity {
 //Modeling the columns of an entity as the smallest package whose 
 //contents can be "saved" to a database. It is an expresion. 
 //Note: this class is not abstract as we can use it to create
-//columns. This is important in the context of left joins
-class column extends schema implements expression{
+//columns. This is important in the conyext of left joins
+abstract class column extends schema implements expression{
     //
     //The parent/home of this column; it is protected to prevent recurssion when 
     //the database object is json encoded
@@ -2664,7 +2638,7 @@ class attribute extends capture implements expression {
 
 //
 //Modelling derived columns, i.e., those not read off the information schema. 
-class field extends column implements expression {
+abstract class field extends column implements expression {
     //
     //This is the calculated/derived expression that is represented by
     //this field. 

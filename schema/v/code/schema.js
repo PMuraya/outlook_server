@@ -4,20 +4,18 @@
 //an application.
 export const databases = {};
 //
-export { database, entity, column, attribute, primary, foreign };
-//
 //Modelling special mutall objects that are associated with a database schema.
 //Database, entity, index and column extends this class. Its main characterstic
 //is that it has an orgainzed error handling mechanism.
 export class schema {
     //
-    //The partial name is the unique identifier of this schema object; it aids in 
-    //xml logging and also in saving of this schema in an array since this name  
-    //is mostly used as an index
+    //The partial name is the unique identifier of this schema object it aids in 
+    //logging and also in saving of this schema in an array since this name  is mostly
+    //used as an index
     partial_name;
     //
-    //Error logging is one of the major features of this schema with its ability 
-    //to bash?? its own error which affects the display of this schema (im metavisuo)
+    //Error logging is one of the major features of this schema with its ability to bash
+    //its own error which affects the display of this schema 
     errors;
     //
     //Define a globally accessible application url for supporting the working of
@@ -27,8 +25,8 @@ export class schema {
     static app_url;
     //
     //To create a schema we require a unique identification also called a partial 
-    //name described above. The default is no name
-    constructor(partial_name = 'unnamed') {
+    //name described above 
+    constructor(partial_name) {
         //
         //The unique identification of this schema 
         this.partial_name = partial_name;
@@ -39,8 +37,8 @@ export class schema {
         this.errors = [];
     }
     //
-    //Displays the error in this schema object in a div element that can be appended 
-    //as a node where required. Is this for metavisio support? 
+    //displays the error in this schema object in a dive that can be appended 
+    //as a node where required 
     display_errors() {
         //
         //create a div where to append the errors with an id of errors 
@@ -271,8 +269,7 @@ class entity extends schema {
     //use of a getter
     ids_;
     //
-    //static object of the indices that are used to activate the ids. NB. PHP 
-    //indexed arraya are converted to javascript objects.
+    //static object of the indices that are used to activate the ids 
     indices;
     //
     //the depth of this entity as derived from php
@@ -403,11 +400,12 @@ class entity extends schema {
         if (this.indices === undefined) {
             return undefined;
         }
+        // 
         //
         const fnames = this.indices[0];
         //
         //If there are no indexes save the ids to null and return the null
-        if (fnames.length === 0) {
+        if (fnames.columns.length === 0) {
             return undefined;
         }
         //
@@ -418,7 +416,7 @@ class entity extends schema {
         let ids = [];
         // 
         //
-        fnames.forEach(name => {
+        fnames.columns.forEach(name => {
             //
             //Get the column of this index
             const col = this.columns[name];
@@ -493,40 +491,6 @@ class entity extends schema {
     toString() {
         return '`' + this.dbase.name + '`' + "." + '`' + this.name + '`';
     }
-    //Collect pointers to this entity from all the available databases
-    *collect_pointers() {
-        //
-        //For each registered database....
-        for (const dbname in databases) {
-            //
-            //Get the nameed database
-            const dbase = databases[dbname];
-            //
-            //Loop through all the entity (names) of the database
-            for (const ename in dbase.entities) {
-                //
-                //Loop through all the columns of entity
-                for (const cname in dbase.entities[ename].columns) {
-                    //
-                    //Get the named column
-                    const col = dbase.entities[ename].columns[cname];
-                    //
-                    //Only foreign keys are considered
-                    if (!(col instanceof foreign))
-                        continue;
-                    //
-                    //The column's reference must match the given subject
-                    if (col.ref.dbname !== this.dbase.name)
-                        continue;
-                    if (col.ref.ename !== this.name)
-                        continue;
-                    //
-                    //Collect this column
-                    yield col;
-                }
-            }
-        }
-    }
 }
 //Modelling the column of a table. This is an absract class. 
 class column extends schema {
@@ -564,9 +528,8 @@ class column extends schema {
     //The acceptable datatype for this column e.g the text, number, autonumber etc 
     data_type;
     //
-    //Determines if this column is optional or not.  if nullable, i.e., optional 
-    //the value is "YES"; if mandatory, i.e., not nullable, the value is 
-    //"NO"
+    //defined if this column is mandatory or not a string "YES" if not nullable 
+    // or a string "NO" if nullable
     is_nullable;
     // 
     //The maximum character length
@@ -611,28 +574,6 @@ class column extends schema {
         //
         //Html used to display this column in a label format
         this.view = document.createElement('label');
-    }
-    //Returns true if this column is used by any identification index; 
-    //otherwise it returns false. Identification columns are part of what is
-    //known as structural columns.
-    is_id() {
-        //
-        //Get the indices of the parent entity 
-        const indices = this.entity.indices;
-        //
-        //Test if this column is used as an 
-        //index. 
-        for (const name in indices) {
-            //
-            //Get the named index
-            const cnames = indices[name];
-            //
-            //An index consists of column names. 
-            if (cnames.includes(this.name))
-                return true;
-        }
-        //This column is not used for identification
-        return false;
     }
     //The string version of a column is used for suppotring sql expressions
     toString() {
@@ -770,10 +711,10 @@ class attribute extends column {
     //
     //The column must have a name, a parent column and the data the json
     // data input 
-    constructor(parent, static_column) {
+    constructor(parent, data) {
         //
         //The parent constructor
-        super(parent, static_column);
+        super(parent, data);
     }
     //
     //popilates the td required for creation of data as a button with an event listener 
@@ -792,3 +733,5 @@ class attribute extends column {
     }
 }
 //
+//
+export { database, entity, column, attribute, primary, foreign };
