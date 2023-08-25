@@ -2,18 +2,17 @@ import * as outlook from "./outlook.js";
 //
 //Allows methods on this page to talk to the server
 import * as server from "../../../schema/v/code/server.js";
+// 
+//This is the problem we have of solving that.
+import * as library from "../../../schema/v/code/library.js";
 //
 //Resolve the schema classes, viz., database, columns, mutall e.t.c. 
 import * as schema from "../../../schema/v/code/schema.js";
 //
 //To allow access to the io system
-import * as io from "../../../schema/v/code/io.js";
+import * as io from "./io.js";
 //
 import * as app from './app.js';
-
-//
-//Resolve the schema classes, viz., database, columns, mutall e.t.c. 
-import * as lib from "../../../schema/v/code/library";
 
 //
 //This interface helps us to control the data we retrieve from the server
@@ -75,11 +74,11 @@ type offset = number;
 export type crud_selection = {
     //
     //The td position where the original primary key came from. 
-    position: lib.position,
+    position: library.position,
     //
     //The primary key auto number represented as a string
     //because we are mostly using it as such. It may be missing for a new record  
-    pk? : lib.pk,
+    pk? : library.pk,
 }
 // 
 //A theme view boundary has two extremes, the top and the bottom 
@@ -124,7 +123,7 @@ export class theme extends outlook.panel {
     sql?: string
     // 
     //2...The column names involved in the above named sql
-    col_names?: Array<schema.cname>;
+    col_names?: Array<library.cname>;
     // 
     //3...The maximum possible records that are available to paint
     //the content pannel. they are required in adjusting the boundaries
@@ -155,7 +154,7 @@ export class theme extends outlook.panel {
     //
     //The database and entity name that is displayed in this 
     //theme panel.
-    public subject: schema.subject;
+    public subject: outlook.subject;
     //
     //Track the original sql for supporting the review service.
     public original_sql: string | null = null;
@@ -169,24 +168,22 @@ export class theme extends outlook.panel {
     constructor(
         //
         //The database and entity name that is displayed in this 
-        //theme panel. If null, we take the subject of the current application
-        subject: schema.subject|null,
+        //theme panel. If null, we take the subject of the curreny application
+        subject: outlook.subject|null,
         // 
         //The css for retrieving the html element where to display 
         //the theme's subject record.
         public css: string,
         // 
         //The view page that is the home of this panel 
-        public base: outlook.page,
+        public base: outlook.view,
         // 
         //The first record that is marked as selected -- if any
         public selection?: crud_selection
         
     ) {
         super(css, base);
-        //
-        //Set the subject (if it is null) to that of the application,
-        this.subject = subject === null ? app.app.current.subject : subject;
+        this.subject = subject === null ? app.app.current.subject:subject;
     }
     //
     //Paint this theme panel with editable records of the current application's
@@ -205,7 +202,7 @@ export class theme extends outlook.panel {
             //
             //Constructor args of an editor class are ename and dbname 
             //packed into a subject array in that order.
-            [this.subject.ename, this.subject.dbname],
+            this.subject,
             //
             //Method called to retrieve editor metadata on the editor class.
             "describe",
@@ -273,7 +270,7 @@ export class theme extends outlook.panel {
             throw new schema.mutall_error('Head element not found');
         //
         //Create the style element and add it to the head.
-        const style:HTMLStyleElement = this.create_element('style', head,{id:`cols${this.key}`})         
+        const style:HTMLStyleElement = this.create_element(head, 'style',{id:`cols${this.key}`})         
         //
         //Get/set the columns style sheet for this theme panel
         this.stylesheet  = style.sheet!;
@@ -321,7 +318,7 @@ export class theme extends outlook.panel {
     protected show_header(thead: HTMLElement) {
         //
         //Construct the tr and attach it to the thead.
-        const tr = this.create_element("tr", thead, {});
+        const tr = this.create_element(thead, "tr", {});
         //
         // Loop through all the columns to create the table headers
         //matching the example above.
@@ -329,7 +326,7 @@ export class theme extends outlook.panel {
             //
             //Create the th element using this panel's document and attach to 
             //the current tr.
-            const th = this.create_element("th", tr, {
+            const th = this.create_element(tr, "th", {
                 id:`'${col_name}'`,
                 textContent:col_name
             });
@@ -479,7 +476,7 @@ export class theme extends outlook.panel {
         const constrained_limit = h < app.app.current.config.limit ? h : app.app.current.config.limit;
         //
         //Query the database 
-        const result: Array<schema.fuel> = await this.query(offset, constrained_limit);
+        const result: library.Ifuel = await this.query(offset, constrained_limit);
         //
         //   
         //Display the results on the table`s body.
@@ -631,11 +628,11 @@ export class theme extends outlook.panel {
     //
     //
     //Fetch the real data from the database as an array of table rows.
-    private async query(offset: offset, limit: number): Promise<Array<schema.fuel>>{
+    private async query(offset: offset, limit: number): Promise<library.Ifuel>{
         // 
         //The entity name that drives this query comes from the subject of this 
         //application
-        const ename = `\`${this.subject.ename}\``;
+        const ename = `\`${this.subject[0]}\``;
         //
         //Complete the sql using the offset and the limit.
         const complete_sql =
@@ -648,7 +645,7 @@ export class theme extends outlook.panel {
             "database",
             //
             //dbase class constructor arguments
-            [this.subject.dbname],
+            [this.subject[1]],
             //
             "get_sql_data",
             //
@@ -660,20 +657,20 @@ export class theme extends outlook.panel {
     //
     //Convert the row object obtained from the server to a tr element.
     //It's public because it's called by create (in crud), to create a blank row.
-    public load_tr_element(
+   public load_tr_element(
         //
-        //Tee table row to load data to. 
+        //The table row to load data to. 
         tr:HTMLTableRowElement,
         //
         //The row of data to load to the tr. There may be none for newly
         //created rows
-        row?: {[index:string]:schema.basic_value}
+        row?: {[index:string]:library.basic_value}
     ):void {
         //
         //Convert the row object into key-value pairs where the
         //key is the column name. Take care of those cases where row 
         //is undefined, e.g., new rows.
-        const pairs: Array<[string, schema.basic_value]> = row === undefined
+        const pairs: Array<[string, library.basic_value]> = row === undefined
             ? this.col_names!.map(cname => [cname, null])
             : Object.entries(row);
         //
@@ -689,7 +686,7 @@ export class theme extends outlook.panel {
         else{
             //Get the primary key column; It is indexed using this theme's
             // subject name.
-            const column = <string>row[this.subject.ename];
+            const column = <string>row[this.subject[0]];
             //
             //The primary key column is a tupple of two values: the autonumber 
             //and the friendly components packed as a single string.
@@ -718,7 +715,7 @@ export class theme extends outlook.panel {
         pairs.forEach(([key, value]) => {
             //
             //Create a td and append it to the row.
-            const td = this.create_element("td", tr, {});
+            const td = this.create_element(tr, "td", {});
             //
             //Set the click event listener of the td
             td.onclick =()=> this.select(td);
@@ -726,11 +723,10 @@ export class theme extends outlook.panel {
             //Set the column name to be associated with this td
             td.setAttribute('data-cname', key);
             //
-            //Set the td's io value
+            //Set the td's "value"
             //
-            //Create the td's io. (this is a local create_io that uses the 
-            //io.create_io version 
-            const Io = this.create_io(td);
+            //Get the td's io
+            const Io = this.get_io(td);
             //
             //Paint the io
             Io.show();
@@ -742,14 +738,15 @@ export class theme extends outlook.panel {
     }
     //
     //Return the io structure associated with the given td
-    private create_io(td: HTMLTableCellElement): io.io {
+    get_io(td: HTMLTableCellElement): io.io {
         // 
-        //Get the column position of this td 
+        //Get the position of this td 
+        const rowIndex = (<HTMLTableRowElement>td.parentElement).rowIndex;
         const cellIndex = td.cellIndex;
         //
         //Destructure the subject to get the entity name; its the 
         //first component. 
-        const ename = this.subject.ename;
+        const[ename] = this.subject;
         // 
         //Get the column name that matches this td. 
         const col_name = this.col_names![cellIndex];
@@ -757,19 +754,107 @@ export class theme extends outlook.panel {
         //Get the actual column from the underlying database.
         const col = this.dbase!.entities[ename].columns[col_name];
         //
-        //Get the anchor for the io
-        const anchor: io.anchor = {element: td, page: this.base};
-        //
-        //Create and return the io for this column when we dont know
-        //its io type.
-        const Io = io.io.create_io(anchor, undefined, col);
+        //Create and return the io for this column.
+        const Io = this.create_io(td, col);
         // 
         return Io;
     }
     
+    //
+    //Creating an io from the given anchor and column. In future, 
+    //consider redefining this as a schema.column methods, rather
+    //than a standalone method.
+    create_io(
+        // 
+        //The parent of the input/output elements of this io. 
+        anchor:HTMLTableCellElement,
+        // 
+        //The column associated with this io. 
+        col: schema.column
+    ): io.io{
+        //
+        //Read only collumns will be tagged as such.
+        if (col.read_only !== undefined && col.read_only)
+                return new io.readonly(anchor);
+        //
+        //Atted to the foreign and primary key columns
+        if (col instanceof schema.primary) 
+            return new io.primary(anchor);
+        if (col instanceof schema.foreign) 
+            return new io.foreign(anchor);
+        //
+        //Attend the attributes
+        //
+        //A column is a checkbox if...
+        if (
+            //
+            //... its name prefixed by 'is_'....
+            col.name.startsWith('is_')
+            // 
+            //...or its datatype is a tinyint.. 
+            || col.data_type === "tinyint"
+            //
+            //...or the field length is 1 character long
+            || col.length === 1
+        )return new io.checkbox(anchor);
+        //
+        //If the length is more than 100 characters, then assume it is a textarea
+        if (col.length! > 100) return new io.textarea(anchor);
+        //
+        //If the column name is 'description', then its a text area
+        if (col.name === 'description')  return new io.textarea(anchor);
+        //
+        //Time datatypes will be returned as dates.
+        if (["timestamp", "date", "time", "datetime"]
+            .find(dtype => dtype === col.data_type))
+                return  new io.input("date", anchor);
+        //
+        //The datatypes bearing the following names should be presented as images
+        // 
+        //Images and files are assumed  to be already saved on the 
+        //remote serve.
+        if (["logo", "picture", "profile", "image","photo"]
+            .find(cname => cname === col.name))             
+                return new io.file(anchor, "image");
+        //
+        if (col.name === ("filename" || "file"))
+                return new io.file(anchor, "file");
+        //
+        //URL
+        //A column is a url if...
+        if (
+            // 
+            //... its name matches one of the following ...
+            ["website", "url", "webpage"].find(cname => cname === col.name)
+            // 
+            //...or it's taged as url using the comment.
+            || col.url !== undefined
+         )
+                    return new io.url(anchor);
+        //
+        //SELECT 
+        //The io type is select if the select propety is set at the column level
+        //(in the column's comment). 
+        //Select requires column to access the multiple choices.
+        if (col.data_type == "enum")         
+            return new io.select(anchor, <schema.attribute>col);
+        //
+        //String datatypes will be returned as normal text, otherwise as numbers.
+        if (["varchar", "text"]
+            .find(dtype => dtype === col.data_type))
+                return new io.input("text", anchor);
+        if (["float", "double", "int", "decimal", "serial", "bit", "mediumInt", "real"]
+            .find(dtype => dtype === col.data_type)) 
+                return new io.input("number", anchor);
+        // 
+        //The default io type is read only 
+        return new io.readonly(anchor);
+    } 
+  
+    //
     //Select the row whose primary key is the given one.
     //and make sure that it is brought into the view 
-    protected select_nth_row(pk?: lib.pk) {
+    protected select_nth_row(pk?: library.pk) {
         // 
         //Row selection is valid only when the pk is set
         if (pk === undefined) return;
@@ -928,5 +1013,39 @@ export class theme extends outlook.panel {
         //OUT OF RANGE: The request is out of range.
         return <out_of_range> {type: "out_of_range", request};
     }
-       
+   
+    //
+    //Restore the ios asociated with the tds on the theme panel. This is
+    //necessary bceuase the old ios are no londer assocuate with the current
+    //document wgos documetElement has changed.
+    public restore_ios(){
+        //
+        //Collect all the tds on this page as an array
+        const tds = Array.from(this.document.querySelectorAll('td')); 
+        //
+        //For each td, restore its io.
+        tds.forEach(td=>{
+            //
+            //Cast the td to table cell element
+            const td_element = <HTMLTableCellElement>td;
+            //
+            //Get the td's row and column positions
+            const rowIndex = (<HTMLTableRowElement>td_element.parentElement).rowIndex;
+            const cellIndex = td_element.cellIndex;
+            //
+            //Compile the io's key key that matches this td
+            const key = String([this.key, rowIndex, cellIndex]);
+            //
+            //Use the static io list to get the io that matches this td
+            const Io = io.io.collection.get(td_element);
+            //
+            //Its an error if the io is not found
+            if (Io===undefined) throw new schema.mutall_error(`io wth key ${key} is not found`);
+            //
+            //Each io has its own way of restoring itself to ensure that
+            //its properties are coupled to the given td element
+            Io.restore();
+        });     
+    }
+        
 }

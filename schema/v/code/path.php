@@ -17,10 +17,6 @@ class path{
         //Construct the full name
         $this->name = $_SERVER['DOCUMENT_ROOT'].$name;
         $this->is_file = $is_file;
-        //
-        //Test if the name file or folder exist; throwing an expection if it does not
-        if (!file_exists($this->name)) 
-            throw new \Exception("Folder or file  '$this->name' does not exist");
     }
     
     //Scan files in folder in the current directory.
@@ -75,6 +71,7 @@ class path{
         'name'=>$name, 
         'size'=>$this->format_size($this->dir_size($path))
     ];
+    
     //
     //Handle files
     //
@@ -92,7 +89,8 @@ class path{
     //
     //Compile and return the properties. 
     return ['name'=>$name, 'size'=>$size, 'create_date'=>$create_date, 'modify_date'=>$modify_date];
-}   
+}    
+     //
     //Returns the complete name of this path by joining trh 2 given parts
     //ensuring that slashes are applied correctly
     function join_paths(string $path1, string $path2):string{
@@ -158,6 +156,37 @@ class path{
         //
         //The path cannot be renamed
         throw new \Exception("Unable to rename '{$this->name}' to '$to'");
+   }
+   // sharon copy
+   //Save the give contents to a file
+    function put_file_contents(string $text)/*number|false*/ {
+        //
+        //Only files are expected
+        if (!$this->is_file) throw new \Exception("This '$this->name' is not a valid file");
+//        //
+//        //The file must exist
+//        if (!file_exists($this->name)) throw new \Exception("This '$this->name' does not exist");
+        //
+        //Return the contents of the requested file
+        return file_put_contents($this->name, $text);
+    }
+    
+     //Copy the given file to the given destination. Return true if successfuk
+   //false otherwise
+   function  copy(string $destination):bool{
+       //
+       // Copy a file to a destination
+       $result = copy($this->name, $_SERVER['DOCUMENT_ROOT'].$destination);
+       //
+       return $result;
+   }
+   
+   //Test if a file exists on not
+   function  exists(string $name):bool{
+       //
+       $result = file_exists($_SERVER['DOCUMENT_ROOT'].$name);
+       //
+       return $result;
    }
    
    

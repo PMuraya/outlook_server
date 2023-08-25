@@ -4,8 +4,6 @@
 //an application.
 export const databases = {};
 //
-export { database, entity, column, attribute, primary, foreign };
-//
 //Modelling special mutall objects that are associated with a database schema.
 //Database, entity, index and column extends this class. Its main characterstic
 //is that it has an orgainzed error handling mechanism.
@@ -770,10 +768,10 @@ class attribute extends column {
     //
     //The column must have a name, a parent column and the data the json
     // data input 
-    constructor(parent, static_column) {
+    constructor(parent, data) {
         //
         //The parent constructor
-        super(parent, static_column);
+        super(parent, data);
     }
     //
     //popilates the td required for creation of data as a button with an event listener 
@@ -792,3 +790,5 @@ class attribute extends column {
     }
 }
 //
+//
+export { database, entity, column, attribute, primary, foreign };

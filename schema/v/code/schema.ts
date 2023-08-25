@@ -14,7 +14,7 @@ export type cname=string;
 export type basic_value = boolean|number|string|null;
 
 //Let fuel be the data type that describes a record derived from an sql statement.
-export type fuel = {[key:string]:basic_value};
+export type fuel = {[index:string]:basic_value};
 
 //
 //The types of columns available in this file
@@ -25,9 +25,6 @@ type col_type="attribute"|"primary"|"foreign"| "field";
 //comprises of the mutall_users database and any other database opened by
 //an application.
 export const databases:{[index:string]:database} = {};
-
-//
-export {database, entity, column, attribute, primary, foreign};
 
 //
 //Modelling special mutall objects that are associated with a database schema.
@@ -883,10 +880,10 @@ class attribute extends column{
     //
     //The column must have a name, a parent column and the data the json
     // data input 
-    constructor(parent:entity, static_column:any){
+    constructor(parent:entity, data:any){
         //
         //The parent constructor
-        super(parent, static_column);
+        super(parent, data);
     }
     //
     //popilates the td required for creation of data as a button with an event listener 
@@ -905,3 +902,5 @@ class attribute extends column{
     }   
 }
 //
+//
+export {database, entity, column, attribute, primary, foreign};

@@ -78,7 +78,7 @@ type alias = Array<schema.basic_value>;
 //
 //An expression is the data to be stored in the database. It may be the simple
 //basic type or a named function implemented in PHP
-export type expression = 
+type expression = 
     //
     //...a basic Typescript value...
     schema.basic_value
@@ -135,8 +135,6 @@ export interface matrix extends table{
         /*$body_start*/number?
     ]
 }
-
-
 
 //
 
