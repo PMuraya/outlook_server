@@ -17,10 +17,6 @@ class path{
         //Construct the full name
         $this->name = $_SERVER['DOCUMENT_ROOT'].$name;
         $this->is_file = $is_file;
-        //
-//        //Test if the name file or folder exist; throwing an expection if it does not
-//        if (!file_exists($this->name)) 
-//            throw new \Exception("Folder or file  '$this->name' does not exist");
     }
     
     //Scan files in folder in the current directory.
