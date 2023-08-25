@@ -89,34 +89,8 @@ class path{
     //
     //Compile and return the properties. 
     return ['name'=>$name, 'size'=>$size, 'create_date'=>$create_date, 'modify_date'=>$modify_date];
-}   
-   function get_properties_sha(string $path, string $name):Array /*={[index:string]:basic_value}*/{
-    //
-    //Handle directories
-    if (!is_file($path)) return [
-        'name'=>$name, 
-        'size'=>$this->format_size($this->dir_size($path))
-    ];
-    
-    //
-    //Handle files
-    //
-    //Use the pathname to construct a file object
-    $file = new \SplFileObject($path);
-    //
-    //Retrieve the size, in friendly format
-    $size = $this->format_size($file->getSize());
-    //
-    //Retrieve the date of creation. date ("F d Y H:i:s.", $time)
-    $create_date= date("d m Y H:i:s", $file->getCTime());
-    //
-    //Retrieve the date of last modification (unix time)
-    $modify_date = date("d m Y H:i:s", $file->getMTime());
-    //
-    //Compile and return the properties. 
-    return ['name'=>$name, 'size'=>$size, 'create_date'=>$create_date, 'modify_date'=>$modify_date];
-}   
- 
+}    
+     //
     //Returns the complete name of this path by joining trh 2 given parts
     //ensuring that slashes are applied correctly
     function join_paths(string $path1, string $path2):string{
